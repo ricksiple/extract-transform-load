@@ -1,0 +1,11 @@
+{
+  "name": "extract-transform-load",
+  "version": "1.0.0",
+  "description": "Extract, Transform and Load pipeline for Node",
+  "main": "main.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "author": "Rick Siple",
+  "license": "ISC"
+}
