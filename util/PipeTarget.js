@@ -8,10 +8,12 @@ class PipeTarget extends stream.Writable {
    }
 
    _write(chunk, encoding, callback) {
-     console.log(chunk + "=" + value);
      var value = this.expected.shift();
-     if (chunk !== value) { throw chunk + ' !== ' + value; }
-     callback();
+     if (chunk !== value) {
+       callback(new Error(chunk + ' !== ' + value));
+     } else {
+       callback();
+     }
    }
 
    _final(callback) {
@@ -21,14 +23,11 @@ class PipeTarget extends stream.Writable {
    }
 
    arrange(value) {
-     console.log(value);
      this.expected.push(value);
    }
 
-   assert(callback) {
-     console.log(this.expected.length);
-     if (this.expected.length) { throw 'PipeTarget: ' + this.expected.length + ' expected items still in the queue.'}
-     callback();
+   assert() {
+     if (this.expected.length > 0) throw new Error('PipeTarget: ' + this.expected.length + ' unexpected items still in queue.');
    }
 
 }

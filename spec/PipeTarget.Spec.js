@@ -16,8 +16,13 @@ describe('PipeTarget', function() {
     source.arrange('This is the first line.');
 
     target.arrange('This is the first line.');
-    target.on('finish', function() {
-        target.assert(done);
+    target
+      .on('error', function(err) {
+        fail('PipeTarget error event fired.');
+      })
+      .on('finish', function() {
+        target.assert();
+        done();
       });
 
     source.pipe(target);
@@ -31,8 +36,13 @@ describe('PipeTarget', function() {
 
     target.arrange('This is the first line.');
     target.arrange('This is the second line.');
-    target.on('finish', function() {
-        target.assert(done);
+    target
+      .on('error', function(err) {
+        fail('PipeTarget error event fired.');
+      })
+      .on('finish', function() {
+        target.assert();
+        done();
       });
 
     source.pipe(target);
@@ -45,8 +55,12 @@ describe('PipeTarget', function() {
 
     target.arrange('This is the first line.');
     target.arrange('This is the second line.');
-    target.on('finish', function() {
-        target.assert();
+    target
+      .on('error', function(err) {
+        fail('PipeTarget error event should not have fired.');
+      })
+      .on('finish', function() {
+        expect(target.assert).toThrowError();
         done();
       });
 
@@ -61,8 +75,13 @@ describe('PipeTarget', function() {
 
     target.arrange('This is the first line.');
 
-    target.on('finish', function() {
-        target.assert();
+    target
+      .on('error', function(err) {
+        // this is the expected result
+        done();
+      })
+      .on('finish', function() {
+        fail('Did not detect the extra line.');
         done();
       });
 
