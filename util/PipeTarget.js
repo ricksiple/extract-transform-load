@@ -7,19 +7,18 @@ class PipeTarget extends stream.Writable {
      this.expected = [];
    }
 
-   _write(chunk, encoding, callback) {
+   _write(chunk, encoding, write_complete) {
      var value = this.expected.shift();
      if (chunk !== value) {
-       callback(new Error(chunk + ' !== ' + value));
+       write_complete(new Error(chunk + ' !== ' + value));
      } else {
-       callback();
+       write_complete();
      }
    }
 
-   _final(callback) {
+   _final(final_complete) {
      // not sure why this event isn't firing????
-     console.log("FINAL");
-     callback();
+     final_complete();
    }
 
    arrange(value) {
