@@ -10,6 +10,7 @@ class PipeTarget extends stream.Writable {
    _write(chunk, encoding, write_complete) {
      var value = this.expected.shift();
      if (chunk !== value) {
+       console.log(chunk + ' (' + chunk.length + ') !== ' + value + ' (' + value.length + ')');
        write_complete(new Error(chunk + ' !== ' + value));
      } else {
        write_complete();
