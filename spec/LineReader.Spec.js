@@ -1,4 +1,3 @@
-var fs = require('fs');
 var stream = require('stream');
 var PipeSource = require('../util/PipeSource');
 var PipeTarget = require('../util/PipeTarget');
