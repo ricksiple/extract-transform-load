@@ -1,4 +1,5 @@
 var stream = require('stream');
+var csv = require('comma-separated-values');
 
 class CsvParser extends stream.Transform {
 
@@ -7,7 +8,7 @@ class CsvParser extends stream.Transform {
   }
 
   _transform(chunk, encoding, chunk_complete) {
-    
+    this.push(csv.parse(chunk)[0]);
     chunk_complete();
   }
 
