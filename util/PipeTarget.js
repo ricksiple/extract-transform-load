@@ -36,9 +36,7 @@ class PipeTarget extends stream.Writable {
 }
 
 PipeTarget.compareArrays = function(chunk, value) {
-    if (!(value)) return false;
-    var retval = chunk.length === value.length && chunk.every(function(v,i) { return v === value[i]; });
-    return retval;
+    return value && chunk.length === value.length && chunk.every(function(v,i) { return v === value[i]; });
   }
 
 module.exports = PipeTarget;
