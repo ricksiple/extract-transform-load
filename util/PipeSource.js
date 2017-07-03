@@ -2,19 +2,20 @@ var stream = require('stream');
 
 class PipeSource extends stream.Readable {
 
-  constructor(options) {
+  constructor(options, verbose = false) {
     super(options);
     this.values = [];
+    this.verbose = verbose;
   }
 
   _read(size) {
     var value = this.values.shift() || null;
-    // console.log('SOURCE-_READ: [' + value + '] is ' + typeof value);
+    if (this.verbose) console.log('SOURCE-READ: [' + value + '] is ' + typeof value + ' ' + value ? value.length : '');
     this.push(value);
   }
 
   arrange(value) {
-    // console.log('SOURCE-ARRANGE: [' + value + '] is ' + typeof value);
+    if (this.verbose) console.log('SOURCE-ARRANGE: [' + value + '] is ' + typeof value + ' ' + value ? value.length : '');
     this.values.push(value);
   }
 
