@@ -10,6 +10,7 @@ class PipeTarget extends stream.Writable {
   }
 
   _write(chunk, encoding, write_complete) {
+    this._spy(chunk);
     if (this.verbose) console.log('TARGET-WRITE: [' + chunk + '] is ' + typeof chunk + ' ' + (chunk ? chunk.length : ''));
     var value = this.expected.shift();
     if (this.compare(chunk, value)) {
@@ -22,6 +23,9 @@ class PipeTarget extends stream.Writable {
   _final(final_complete) {
     // not sure why this event isn't firing????
     final_complete();
+  }
+
+  _spy(chunk) {
   }
 
   arrange(value) {
