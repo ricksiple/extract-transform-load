@@ -7,6 +7,8 @@ describe('UnionAll', function() {
 
   it('should union all rows from two sources.', function(done) {
 
+    var spy;
+
     var source1 = new PipeSource({objectMode:true});
     source1.on('error', function(error) { fail('source1: ' + error); });
     source1.arrange({id:1,name:'Adam'});
@@ -16,20 +18,27 @@ describe('UnionAll', function() {
     source2.on('error', function(error) { fail('source2: ' + error); });
     source2.arrange({id:3,name:'Sue'});
     source2.arrange({id:2,name:'Mary'})
+
     var target = new PipeTarget({objectMode:true},
       function(actual, expected) {
-        console.log(actual);
         return true;
       }
     );
     target.on('error', function(error) { fail('target: ' + error); });
     target.on('finish', function() {
       target.assert();
+      expect(spy).toHaveBeenCalledTimes(4);
+      expect(spy).toHaveBeenCalledWith({id:1,name:'Adam'});
+      expect(spy).toHaveBeenCalledWith({id:2,name:'Mary'});
+      expect(spy).toHaveBeenCalledWith({id:3,name:'Sue'});
+      expect(spy).toHaveBeenCalledWith({id:4,name:'Bill'});
       done();
     });
 
     var union = new UnionAll({objectMode:true}, [source1, source2]);
     union.on('error', function(error) { fail('union: ' + error); });
+
+    spy = spyOn(target, '_spy');
 
     union.pipe(target);
 
