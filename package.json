@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "comma-separated-values": "^3.6.4",
-    "csv-streamify": "^3.0.4"
+    "csv-streamify": "^3.0.4",
+    "lodash.orderby": "^4.6.0"
   }
 }
