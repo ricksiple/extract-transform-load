@@ -8,17 +8,19 @@ describe('Sqlite3Target', () => {
   var source;
   var target;
 
-  beforeEach(() => {
-
-    db = new Sqlite3.Database(':memory:', () => {
-      db.run('CREATE TABLE target (targetId INTEGER, targetName TEXT)');
-    });
+  beforeEach((done) => {
 
     source = new PipeSource({objectMode: true});
     source.on('error', (error) => { console.log('SOURCE: ' + error); });
 
-    target = new Sqlite3Target({objectMode: true}, db, ["id", "name"], ["targetId", "targetName"]);
-    target.on('error', (error) => { console.log('TARGET: ' + error); });
+    db = new Sqlite3.Database(':memory:', () => {
+      db.run('CREATE TABLE target (targetId INTEGER, targetName TEXT)',
+        (error) => {
+          target = new Sqlite3Target({objectMode: true}, db, 'target', ["id", "name"], ["targetId", "targetName"]);
+          target.on('error', (error) => { console.log('TARGET: ' + error); });
+          done();
+        });
+    });
 
   });
 
@@ -28,8 +30,10 @@ describe('Sqlite3Target', () => {
     source.arrange({id:1, name:'Manny'});
     source.arrange({id:3, name:'Jack'});
 
-    target.on('finished', () => {
-      db.all('SELECT id, name FROM target ORDER BY id', (err, rows) => {
+    target.on('finish', () => {
+      db.all('SELECT targetId, targetName FROM target ORDER BY targetId', (err, rows) => {
+        expect(err).toBeNull();
+        expect(rows.length).toBe(3);
         expect(rows[0].targetId).toBe(1);
         expect(rows[0].targetName).toBe('Manny');
         expect(rows[1].targetId).toBe(2);
@@ -39,6 +43,8 @@ describe('Sqlite3Target', () => {
         done();
       });
     });
+
+    source.pipe(target);
 
   });
 
