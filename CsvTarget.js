@@ -4,12 +4,12 @@ var quoteString = { format: function(s) {   return '"' + s + '"'; } };
 
 class CsvTarget extends stream.Transform {
 
-  constructor(options, fields, headers, format) {
+  constructor(options, fields, formats, headers) {
     super(options);
 
     this.fields = fields;
     this.headers = headers || this.fields;
-    this.formats = format;
+    this.formats = formats;
 
     if (!this.formats) {
       this.formats = [];

@@ -30,7 +30,7 @@ describe('CsvTarget', () => {
     target.on('error', (error) => { fail('TARGET: ' + error); done(); });
     target.on('finish', done);
 
-    var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title'], ['Employee Id', 'Employee Name', 'Employee Title'], [Intl.NumberFormat(), CsvTarget.quoteString, CsvTarget.quoteString]);
+    var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title'], [Intl.NumberFormat(), CsvTarget.quoteString, CsvTarget.quoteString], ['Employee Id', 'Employee Name', 'Employee Title']);
     csv.on('error', (error) => { fail('CsvTarget: ' + error); done(); });
 
     source.pipe(csv).pipe(target);
@@ -48,7 +48,7 @@ describe('CsvTarget', () => {
     target.on('error', (error) => { fail('TARGET: ' + error); done(); });
     target.on('finish', done);
 
-    var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title'], null, [Intl.NumberFormat(), CsvTarget.quoteString, CsvTarget.quoteString]);
+    var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title'], [Intl.NumberFormat(), CsvTarget.quoteString, CsvTarget.quoteString]);
     csv.on('error', (error) => { fail('CsvTarget: ' + error); done(); });
 
     source.pipe(csv).pipe(target);
@@ -58,7 +58,7 @@ describe('CsvTarget', () => {
   it('should throw an error if the header count does not match the field count.', () => {
 
     expect( () => {
-      var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title'], ['Employee_Id', 'Employee_Name'], [Intl.NumberFormat(), CsvTarget.quoteString, CsvTarget.quoteString]);
+      var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title'], [Intl.NumberFormat(), CsvTarget.quoteString, CsvTarget.quoteString], ['Employee_Id', 'Employee_Name']);
     }).toThrowError();
 
   });
@@ -66,7 +66,7 @@ describe('CsvTarget', () => {
   it('should throw an error if the formatter count does not match the field count.', () => {
 
     expect( () => {
-      var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title'], ['Employee_Id', 'Employee_Name', 'Employee_Title'], [Intl.NumberFormat(), CsvTarget.quoteString]);
+      var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title'], [Intl.NumberFormat(), CsvTarget.quoteString], ['Employee_Id', 'Employee_Name', 'Employee_Title']);
     }).toThrowError();
 
   });
