@@ -6,10 +6,16 @@ class CsvTarget extends stream.Transform {
 
   constructor(options, fields, headers, format) {
     super(options);
+
     this.fields = fields;
     this.headers = headers || this.fields;
     this.formats = format;
+
+    if (this.fields.length !== this.headers.length) { throw new Error('Header count (' + this.headers.length + ') must match field count (' + this.fields.length + ').'); }
+    if (this.fields.length !== this.formats.length) { throw new Error('Formatter count (' + this.formats.length + ') must match field count (' + this.fields.length + ').'); }
+
     this._transform = this._transform_first
+
   }
 
   _transform_first(chunk, encoding, transform_complete) {

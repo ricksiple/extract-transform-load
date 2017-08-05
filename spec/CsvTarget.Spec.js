@@ -50,4 +50,20 @@ describe('CsvTarget', () => {
 
   });
 
+  it('should throw an error if the header count does not match the field count.', () => {
+
+    expect( () => {
+      var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title'], ['Employee_Id', 'Employee_Name'], [Intl.NumberFormat(), CsvTarget.quoteString, CsvTarget.quoteString]);
+    }).toThrowError();
+
+  });
+
+  it('should throw an error if the formatter count does not match the field count.', () => {
+
+    expect( () => {
+      var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title'], ['Employee_Id', 'Employee_Name', 'Employee_Title'], [Intl.NumberFormat(), CsvTarget.quoteString]);
+    }).toThrowError();
+
+  });
+
 });
