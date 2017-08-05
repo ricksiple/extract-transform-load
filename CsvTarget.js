@@ -11,6 +11,13 @@ class CsvTarget extends stream.Transform {
     this.headers = headers || this.fields;
     this.formats = format;
 
+    if (!this.formats) {
+      this.formats = [];
+      for (var n = 0; n < this.fields.length; n++) {
+        this.formats.push(quoteString);
+      }
+    }
+
     if (this.fields.length !== this.headers.length) { throw new Error('Header count (' + this.headers.length + ') must match field count (' + this.fields.length + ').'); }
     if (this.fields.length !== this.formats.length) { throw new Error('Formatter count (' + this.formats.length + ') must match field count (' + this.fields.length + ').'); }
 

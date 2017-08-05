@@ -4,15 +4,25 @@ var PipeTarget = require('../util/PipeTarget');
 
 describe('CsvTarget', () => {
 
-  it('should convert objects to lines of comma separated text.', (done) => {
+  var source;
+  var target;
+  var csv;
 
-    var source = new PipeSource({objectMode: true});
+  beforeEach(() => {
+
+    source = new PipeSource({objectMode: true});
     source.arrange({name: 'John', id: 2, title: 'Software Developer'});
     source.arrange({name: 'Betty', id:1, title: 'Software Tester'});
     source.arrange({name: 'Joan', id:3, title: 'Director'});
+
+    target = new PipeTarget({objectMode: true});
+
+  });
+
+  it('should convert objects to lines of comma separated text.', (done) => {
+
     source.on('error', (error) => { fail('SOURCE: ' + error); done(); });
 
-    var target = new PipeTarget({objectMode: true});
     target.arrange('"Employee Id","Employee Name","Employee Title"');
     target.arrange('2,"John","Software Developer"');
     target.arrange('1,"Betty","Software Tester"');
@@ -29,13 +39,8 @@ describe('CsvTarget', () => {
 
   it('default to using fields name for headers.', (done) => {
 
-    var source = new PipeSource({objectMode: true});
-    source.arrange({name: 'John', id: 2, title: 'Software Developer'});
-    source.arrange({name: 'Betty', id:1, title: 'Software Tester'});
-    source.arrange({name: 'Joan', id:3, title: 'Director'});
     source.on('error', (error) => { fail('SOURCE: ' + error); done(); });
 
-    var target = new PipeTarget({objectMode: true});
     target.arrange('"id","name","title"');
     target.arrange('2,"John","Software Developer"');
     target.arrange('1,"Betty","Software Tester"');
@@ -63,6 +68,24 @@ describe('CsvTarget', () => {
     expect( () => {
       var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title'], ['Employee_Id', 'Employee_Name', 'Employee_Title'], [Intl.NumberFormat(), CsvTarget.quoteString]);
     }).toThrowError();
+
+  });
+
+  it('should default all formats to quoteString if an array is not provided.', (done) => {
+
+    source.on('error', (error) => { fail('SOURCE: ' + error); done(); });
+
+    target.arrange('"id","name","title"');
+    target.arrange('"2","John","Software Developer"');
+    target.arrange('"1","Betty","Software Tester"');
+    target.arrange('"3","Joan","Director"');
+    target.on('error', (error) => { fail('TARGET: ' + error); done(); });
+    target.on('finish', done);
+
+    var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title']);
+    csv.on('error', (error) => { fail('CsvTarget: ' + error); done(); });
+
+    source.pipe(csv).pipe(target);
 
   });
 
