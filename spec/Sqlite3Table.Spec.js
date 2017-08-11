@@ -49,7 +49,10 @@ describe('Sqlite3Table', function() {
     target.arrange({name: 'Bob', role: 'DEV', roleId: 1});
     target.arrange({name: 'Carl', role: 'TST', roleId: 3});
     target.on('error', function(error) { fail('TARGET: ' + error); done(); });
-    target.on('finish', done);
+    target.on('finish', function() {
+      target.assert();
+      done()
+    });
 
     var s3t = new Sqlite3Table({objectMode: true},
       db, 'RoleType',
