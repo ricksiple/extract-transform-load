@@ -44,7 +44,7 @@ class Sqlite3Table extends stream.Transform {
             keys[key] = rows[row][tableMatch[key]];
           }
           for (var field = 0; field < me.fieldCount; field++) {
-            value[tableLookup[field]] = row[tableLookup[field]];
+            value[tableLookup[field]] = rows[row][tableLookup[field]];
           }
           me.dictionary.add(keys, value);
         }
@@ -68,6 +68,9 @@ class Sqlite3Table extends stream.Transform {
         chunk[this.rowLookup[field]] = value[this.tableLookup[field]];
       }
     }
+
+    this.push(chunk);
+    transform_complete();
 
   }
 

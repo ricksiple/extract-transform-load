@@ -20,6 +20,14 @@ describe('Sqlite3Table', function() {
         if (error) { fail(error); }
         done();
       });
+      // db.all("SELECT id, code FROM RoleType ORDER BY id;", [], function(error, rows) {
+      //   if (error) {
+      //     fail(error);
+      //   } else {
+      //     rows.forEach(function(element) { console.log(element.id + ',' + element.code); });
+      //   }
+      //   done();
+      // });
     });
   });
 
@@ -31,7 +39,12 @@ describe('Sqlite3Table', function() {
     source.arrange({name: 'Carl', role: 'TST'});
     source.on('error', function(error) { fail('SOURCE: ' + error); done(); });
 
-    var target = new PipeTarget({objectMode: true});
+    var target = new PipeTarget({objectMode: true},
+      function(actual, expected) {
+        expect(actual).toEqual(expected);
+        return true;
+      }
+    );
     target.arrange({name: 'Adam', role: 'MGR', roleId: 2});
     target.arrange({name: 'Bob', role: 'DEV', roleId: 1});
     target.arrange({name: 'Carl', role: 'TST', roleId: 3});
