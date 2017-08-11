@@ -1,5 +1,5 @@
 var stream = require('stream');
-var Mkd = require('util/MultiKeyDictionary');
+var Mkd = require('./util/MultiKeyDictionary');
 
 class Sqlite3Table extends stream.Transform {
 
@@ -11,12 +11,24 @@ class Sqlite3Table extends stream.Transform {
     this.rowLookup = rowLookup;
     this.tableLookup = tableLookup;
 
-    if (rowMatch.length !=== tableMatch.length) { throw RangeError('Number of table key fields (' + tableMatch.length + ') does not match number of row key fields(' +  rowMatch.length + ').')}
-    if (rowLookup.length !=== tableLookup.length) { throw RangeError('Number of table lookup fields (' + tableLookup.length + ') does not match number of row lookup fields(' +  rowLookup.length + ').')}
+    if (rowMatch.length !== tableMatch.length) {
+      if (callback) {
+        callback('Number of table key fields (' + tableMatch.length + ') does not match number of row key fields(' +  rowMatch.length + ').');
+        return;
+      }
+    }
+    if (rowLookup.length !== tableLookup.length) {
+      if (callback) {
+        callback('Number of table lookup fields (' + tableLookup.length + ') does not match number of row lookup fields(' +  rowLookup.length + ').');
+        return;
+      }
+    }
 
     this.keyCount = tableMatch.length;
     this.fieldCount = tableLookup.length;
-    this.dictionary = new Mkd(keyCount);
+    this.dictionary = new Mkd(this.keyCount);
+
+    var me = this;
 
     var keys;
     var value;
@@ -25,16 +37,16 @@ class Sqlite3Table extends stream.Transform {
       if (error) {
         if (callback) { callback(error); }
       } else {
-        for (var row = 0, row < rows.length; row++) {
+        for (var row = 0; row < rows.length; row++) {
           keys = [];
           value = {};
-          for (var key = 0; key < this.keyCount; key++) {
+          for (var key = 0; key < me.keyCount; key++) {
             keys[key] = rows[row][tableMatch[key]];
           }
-          for (var field = 0; field < this.fieldCount; field++) {
+          for (var field = 0; field < me.fieldCount; field++) {
             value[tableLookup[field]] = row[tableLookup[field]];
           }
-          this.dictionary.add(keys, value);
+          me.dictionary.add(keys, value);
         }
         if (callback) { callback(); }
       }
@@ -45,8 +57,8 @@ class Sqlite3Table extends stream.Transform {
   _transform(chunk, encoding, transform_complete) {
 
     var keys = [];
-    for (var key = 0; key < this.keyCount) {
-      keys[key] = chunk[this.rowMatch[key]);
+    for (var key = 0; key < this.keyCount; key++) {
+      keys[key] = chunk[this.rowMatch[key]];
     }
 
     var value = this.dictionary.find(keys);
@@ -60,3 +72,5 @@ class Sqlite3Table extends stream.Transform {
   }
 
 }
+
+module.exports = Sqlite3Table;
