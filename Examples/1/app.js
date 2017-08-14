@@ -9,10 +9,22 @@ db = new Sqlite3.Database(':memory:', function(error) {
   }
 });
 
-CreateDatabase(db);
-ImportFinancial(db);
+// action queue
 
-function CreateDatabase(db) {
+var todo = [];
+todo.push(CreateDatabase);
+todo_next();
+
+function todo_next() {
+  var f = todo.pop();
+  if (f) {
+    setTimeout(function() { f(db, todo_next); });
+  }
+}
+
+//actions
+
+function CreateDatabase(db, next) {
 
   db.serialize(function() {
 
@@ -26,71 +38,50 @@ function CreateDatabase(db) {
       if (error) {
         console.log('Error creating FinancialType table: ' + error);
         abort = true;
-      }
-    });
-    if (abort) { return; }
-
-    // Financial
-    sql = 'CREATE TABLE Financial (id INTEGER PRIMARY KEY AUTOINCREMENT, code TEXT UNIQUE NOT NULL, name TEXT UNIQUE NOT NULL, financialTypeId INTEGER NOT NULL, startDate INTEGER NOT NULL, endDate INTEGER NULL);';
-    db.run(sql, [], function(error) {
-      if (error) {
-        console.log('Error creating Financial table: ' + error);
-        abort = true;
-      }
-    });
-    if (abort) { return; }
-
-    // Relationship
-    sql = 'CREATE TABLE Relationship (id INTEGER PRIMARY KEY AUTOINCREMENT, financialId INTEGER NOT NULL, relatedId INTEGER NOT NULL, startDate INTEGER NOT NULL, endDate INTEGER NULL);';
-    db.run(sql, [], function(error) {
-      if (error) {
-        console.log('Error creating Relationship table: ' + error);
-        abort = true;
-      }
-    });
-    if (abort) { return; }
-
-    // Performance
-    sql = 'CREATE TABLE Performance (id INTEGER PRIMARY KEY AUTOINCREMENT, financialId INTEGER NOT NULL, startDate INTEGER NOT NULL, endDate INTEGER NOT NULL, netReturn REAL NOT NULL, grossReturn REAL NOT NULL, startMarketValue REAL NOT NULL, endMarketValue REAL NOT NULL);';
-    db.run(sql, [], function(error) {
-      if (error) {
-        console.log('Error creating Performance table: ' + error);
-        abort = true;
-      }
-    });
-    if (abort) { return; }
-
-    // populate
-    // FinancialType
-    sql = "INSERT INTO FinancialType (code, name) VALUES ('P', 'Portfolio'),  ('B', 'Benchmark');"
-    db.run(sql, [], function(error) {
-      if (error) {
-        console.log('Error populating database: ' + error);
-        abort = true;
-      }
-    });
-    if (abort) { return; }
-
-    // test
-    // FinancialType
-    var sql = "SELECT id, code, name FROM FinancialType ORDER BY code ASC;"
-    db.each(sql, [], function(error, row) {
-      if (error) {
-        console.log('Error getting FinancialType rows: ' + error);
-        abort = true;
       } else {
-        console.log('id: ' + row.id + ', code: ' + row.code + ', name: ' + row.name);
+        console.log('CREATE TABLE FinancialType...OK');
+        next();
       }
     });
     if (abort) { return; }
+
+    // // Financial
+    // sql = 'CREATE TABLE Financial (id INTEGER PRIMARY KEY AUTOINCREMENT, code TEXT UNIQUE NOT NULL, name TEXT UNIQUE NOT NULL, financialTypeId INTEGER NOT NULL, startDate INTEGER NOT NULL, endDate INTEGER NULL);';
+    // db.run(sql, [], function(error) {
+    //   if (error) {
+    //     console.log('Error creating Financial table: ' + error);
+    //     abort = true;
+    //   }
+    // });
+    // if (abort) { return; }
+    //
+    // // Relationship
+    // sql = 'CREATE TABLE Relationship (id INTEGER PRIMARY KEY AUTOINCREMENT, financialId INTEGER NOT NULL, relatedId INTEGER NOT NULL, startDate INTEGER NOT NULL, endDate INTEGER NULL);';
+    // db.run(sql, [], function(error) {
+    //   if (error) {
+    //     console.log('Error creating Relationship table: ' + error);
+    //     abort = true;
+    //   }
+    // });
+    // if (abort) { return; }
+    //
+    // // Performance
+    // sql = 'CREATE TABLE Performance (id INTEGER PRIMARY KEY AUTOINCREMENT, financialId INTEGER NOT NULL, startDate INTEGER NOT NULL, endDate INTEGER NOT NULL, netReturn REAL NOT NULL, grossReturn REAL NOT NULL, startMarketValue REAL NOT NULL, endMarketValue REAL NOT NULL);';
+    // db.run(sql, [], function(error) {
+    //   if (error) {
+    //     console.log('Error creating Performance table: ' + error);
+    //     abort = true;
+    //   }
+    // });
+    // if (abort) { return; }
 
   });
 
 }
 
-function ImportFinancial(db) {
+function ImportFinancialType(db, next) {
 
-  var source = new fs.createReadStream('./Financial.csv')
+  var source = new fs.createReadStream('./FinancialType.csv')
   source.on('error', function(errror) { console.log('SOURCE: ' + error); });
 
   var lr = new LineReader({objectMode: true});
@@ -99,4 +90,19 @@ function ImportFinancial(db) {
   var csv = new CsvParser({objectMode: true, useHeaders: true});
   csv.on('error', function(error) { console.log('CSVPARSER: ' + error); });
 
+  var s3target = new Sqlite3Target({objectMode: true});
+  
 }
+
+// function ImportFinancial(db) {
+//
+//   var source = new fs.createReadStream('./Financial.csv')
+//   source.on('error', function(errror) { console.log('SOURCE: ' + error); });
+//
+//   var lr = new LineReader({objectMode: true});
+//   lr.on('error', function(error) { console.log('LINEREADER: ' + error); });
+//
+//   var csv = new CsvParser({objectMode: true, useHeaders: true});
+//   csv.on('error', function(error) { console.log('CSVPARSER: ' + error); });
+//
+// }
