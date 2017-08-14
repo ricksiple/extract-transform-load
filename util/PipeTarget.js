@@ -5,18 +5,18 @@ class PipeTarget extends stream.Writable {
   constructor(options, compare = null, verbose = false) {
     super(options);
     this.expected = [];
-    this.compare = compare || function(chunk, value) { return (chunk === value); };
+    this.compare = compare || function(actual, expected) { return (actual === expected); };
     this.verbose = verbose;
   }
 
   _write(chunk, encoding, write_complete) {
     this._spy(chunk);
     if (this.verbose) console.log('TARGET-WRITE: [' + chunk + '] is ' + typeof chunk + ' ' + (chunk ? chunk.length : ''));
-    var value = this.expected.shift();
-    if (this.compare(chunk, value)) {
+    var expected = this.expected.shift();
+    if (this.compare(chunk, expected)) {
       write_complete();
     } else {
-      write_complete(new Error(chunk + ' !== ' + value));
+      write_complete(new Error(chunk + ' !== ' + expected));
     }
   }
 
@@ -28,9 +28,9 @@ class PipeTarget extends stream.Writable {
   _spy(chunk) {
   }
 
-  arrange(value) {
-    if (this.verbose) console.log('TARGET-ARRANGE: [' + value + '] is ' + typeof value + ' ' + (value ? value.length : ''));
-    this.expected.push(value);
+  arrange(expected) {
+    if (this.verbose) console.log('TARGET-ARRANGE: [' + expected + '] is ' + typeof expected + ' ' + (expected ? expected.length : ''));
+    this.expected.push(expected);
   }
 
   assert() {
