@@ -8,7 +8,7 @@ class Target extends stream.Writable {
    }
 
    _write(chunk, encoding, write_complete) {
-     console.log('_write');
+     console.log('_write: ' + chunk);
      write_complete();
    }
 
@@ -19,7 +19,7 @@ class Target extends stream.Writable {
    }
 
 }
-var source = fs.createReadStream('./test.csv', {encoding: 'utf8', decodeStrings:false});
+var source = fs.createReadStream('./test.csv');
 
 var target = new Target({encoding: 'utf8', decodeStrings: false});
 target.on('error', function(err) { console.log(err); } );

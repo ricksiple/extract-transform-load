@@ -23,6 +23,7 @@ class Sqlite3Target extends stream.Writable {
     }
 
     this.sql = 'INSERT INTO ' + table_name + ' (' + sql_fields + ') VALUES (' + sql_params + ')';
+    console.log(this.sql);
 
   }
 
@@ -54,6 +55,7 @@ class Sqlite3Target extends stream.Writable {
   }
 
   _final(final_complete) {
+    console.log('_final');
     this.stmt.finalize();
     this.db.run('commit transaction', (error) => {
       final_complete();

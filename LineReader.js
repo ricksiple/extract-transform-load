@@ -17,7 +17,7 @@ class LineReader extends stream.Transform {
     this.buffer = lines.pop();
 
     lines.forEach(function(currentValue, index, arr) {
-      // console.log('PUSH: ' + currentValue);
+      // console.log('PUSH: ' + currentValue + ' [' + currentValue.length + ']');
       this.push(currentValue);
     }, this);
 
@@ -26,8 +26,9 @@ class LineReader extends stream.Transform {
   }
 
   _flush(callback) {
-    // console.log('PUSH: ' + this.buffer);
-    this.push(this.buffer);
+    if (this.buffer.length) {
+      // console.log('PUSH: ' + this.buffer + ' [' + this.buffer.length + ']');
+      this.push(this.buffer); }
     callback();
   }
 
