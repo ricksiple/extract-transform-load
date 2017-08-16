@@ -12,6 +12,6 @@
     "comma-separated-values": "^3.6.4",
     "csv-streamify": "^3.0.4",
     "lodash.orderby": "^4.6.0",
-    "sqlite3": "^3.1.8"
+    "sqlite3": "^3.1.9"
   }
 }

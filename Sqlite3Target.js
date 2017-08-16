@@ -55,7 +55,6 @@ class Sqlite3Target extends stream.Writable {
   }
 
   _final(final_complete) {
-    console.log('_final');
     this.stmt.finalize();
     this.db.run('commit transaction', (error) => {
       final_complete();

@@ -4,9 +4,6 @@ var LineReader = require('../../LineReader');
 var CsvParser = require('../../CsvParser');
 var Sqlite3Target = require('../../Sqlite3Target');
 
-var http = require('http');
-var server = http.createServer((req, res) => { res.end(); });
-
 db = new Sqlite3.Database(':memory:', function(error) {
   if (error) {
     console.log('Error creating database instance: ' + error);
@@ -18,19 +15,16 @@ db = new Sqlite3.Database(':memory:', function(error) {
 var todo = [];
 todo.push(done)
 todo.push(closeDatabase);
+todo.push(queryFinancialType);
 todo.push(importFinancialType);
 todo.push(createDatabase);
 
 // schedule the first action
 todo_next();
 
-// wait until all actions finished
-server.listen();
-
 function todo_next() {
   var f = todo.pop();
   if (f) {
-    console.log(f);
     process.nextTick(f, db, todo_next);
   }
 }
@@ -38,15 +32,20 @@ function todo_next() {
 //actions
 
 function done(db, next) {
-  console.log('Done.');
-  server.close()
+  console.log('*** done.');
 }
 
 function closeDatabase(db, next) {
+
+  console.log('*** closeDatabase...');
+
   db.close(next);
+
 }
 
 function createDatabase(db, next) {
+
+  console.log('*** createDatabase...');
 
   db.serialize(function() {
 
@@ -103,6 +102,8 @@ function createDatabase(db, next) {
 
 function importFinancialType(db, next) {
 
+  console.log('*** importFinancialType...');
+
   var source = new fs.createReadStream('./FinancialType.csv')
   source.on('error', function(errror) { console.log('SOURCE: ' + error); });
 
@@ -117,9 +118,27 @@ function importFinancialType(db, next) {
     ['type_code', 'type_name'], ['code', 'name']
   );
   s3target.on('error', function(error) { console.log('SQLITE3TARGET: ' + error); });
-  s3target.on('finished', next);
+  s3target.on('finish', next);
 
   source.pipe(lr).pipe(csv).pipe(s3target);
+
+}
+
+function queryFinancialType(db, next) {
+
+  console.log('*** queryFinancialType...');
+  console.log('id, code, name');
+
+  db.all("SELECT id, code, name FROM FinancialType ORDER BY code ASC", [], function(error, rows) {
+    if (error) {
+      console.log('queryFinancialType: ' + error);
+    } else {
+      rows.forEach(function(row) {
+        console.log(row.id + ', ' + row.code + ', ' + row.name);
+      });
+      next();
+    }
+  });
 
 }
 
