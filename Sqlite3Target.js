@@ -23,16 +23,21 @@ class Sqlite3Target extends stream.Writable {
     }
 
     this.sql = 'INSERT INTO ' + table_name + ' (' + sql_fields + ') VALUES (' + sql_params + ')';
-    console.log(this.sql);
 
   }
 
   _write(chunk, encoding, write_complete) {
+
+    var me = this;
+
     // initial statment setup
-    this.stmt = this.db.prepare(this.sql, (error) => {
-      this.db.run('begin transaction', (error) => {
-        this._write = this._write_impl;
-        this._write(chunk, encoding, write_complete);
+    me.db.serialize(function() {
+      me.stmt = me.db.prepare(me.sql, (error) => {
+        if (error) { console.log('Sqlite3Target: Error preparing statement: "' + me.sql + '": ' + error)};
+      });
+      me.db.run('begin transaction', (error) => {
+        me._write = me._write_impl;
+        me._write(chunk, encoding, write_complete);
       });
     });
   }
