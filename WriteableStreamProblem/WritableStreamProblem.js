@@ -20,8 +20,9 @@ class Target extends stream.Writable {
 
 }
 var source = fs.createReadStream('./test.csv');
+source.on('error', function(err) { console.log('SRC: ' + err); } );
 
 var target = new Target({encoding: 'utf8', decodeStrings: false});
-target.on('error', function(err) { console.log(err); } );
+target.on('error', function(err) { console.log('TGT: ' + err); } );
 
 source.pipe(target);
