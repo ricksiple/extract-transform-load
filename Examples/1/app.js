@@ -3,6 +3,7 @@ var fs = require('fs');
 var LineReader = require('../../LineReader');
 var CsvParser = require('../../CsvParser');
 var Sqlite3Target = require('../../Sqlite3Target');
+var Sqlite3Table = require('../../Sqlite3Table');
 var Stack = require('../../util/stack');
 
 class Example1 {
@@ -15,7 +16,9 @@ class Example1 {
     this._stack.push(this.openDatabase);
     this._stack.push(this.createDatabase);
     this._stack.push(this.importFinancialType);
+    this._stack.push(this.importFinancial);
     this._stack.push(this.queryFinancialType);
+    this._stack.push(this.queryFinancial);
     this._stack.push(this.closeDatabase);
     this._stack.push(this.done)
 
@@ -157,6 +160,71 @@ class Example1 {
 
   }
 
+  queryFinancial() {
+
+    console.log('*** queryFinancial...');
+    console.log('id, code, name, financialTypeId, startDate, endDate');
+
+    var me = this;
+
+    me._db.all("SELECT id, code, name, financialTypeId, startDate, endDate FROM Financial ORDER BY code ASC", [], function(error, rows) {
+      if (error) {
+        console.log('queryFinancial: ' + error);
+      } else {
+        rows.forEach(function(row) {
+          console.log(row.id + ', ' + row.code + ', ' + row.name + ', ' + row.financialTypeId + ', ' + row.startDate + ', ' + row.endDate);
+        });
+        me.next();
+      }
+    });
+
+  }
+
+  importFinancial() {
+
+    var me = this;
+
+    var source = new fs.createReadStream('./Financial.csv')
+    source.on('error', function(error) {
+      console.log('SOURCE: ' + error);
+      me.next(false);
+    });
+
+    var lr = new LineReader({objectMode: true});
+    lr.on('error', function(error) {
+      console.log('LINEREADER: ' + error);
+      me.next(false);
+    });
+
+    var csv = new CsvParser({objectMode: true, useHeaders: true});
+    csv.on('error', function(error) {
+      console.log('CSVPARSER: ' + error);
+      me.next(false);
+    });
+
+    var s3table = new Sqlite3Table({objectMode: true},
+        me._db, 'FinancialType',
+        ['TypeCode'], ['code'],
+        ['financialTypeId'], ['id']
+    );
+    s3table.on('error', function(error) {
+      console.log('S3TABLE: ' + error);
+      me.next(false);
+    });
+
+    var s3target = new Sqlite3Target({objectMode: true},
+      me._db, 'Financial',
+      ['Code', 'Name', 'financialTypeId', 'StartDate', 'EndDate'], ['code', 'name', 'financialTypeId', 'startDate', 'endDate']
+    );
+    s3target.on('error', function(error) {
+      console.log('SQLITE3TARGET: ' + error);
+      me.next(false)
+    });
+    s3target.on('finish', () => { me.next(); });
+
+    source.pipe(lr).pipe(csv).pipe(s3table).pipe(s3target);
+  }
+
   closeDatabase() {
 
     console.log('*** closeDatabase...');
@@ -173,16 +241,3 @@ class Example1 {
 
 var ex1 = new Example1();
 ex1.next();
-
-// function ImportFinancial(db) {
-//
-//   var source = new fs.createReadStream('./Financial.csv')
-//   source.on('error', function(errror) { console.log('SOURCE: ' + error); });
-//
-//   var lr = new LineReader({objectMode: true});
-//   lr.on('error', function(error) { console.log('LINEREADER: ' + error); });
-//
-//   var csv = new CsvParser({objectMode: true, useHeaders: true});
-//   csv.on('error', function(error) { console.log('CSVPARSER: ' + error); });
-//
-// }
