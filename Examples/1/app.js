@@ -22,10 +22,12 @@ todo.push(createDatabase);
 // schedule the first action
 todo_next();
 
-function todo_next() {
-  var f = todo.pop();
-  if (f) {
-    process.nextTick(f, db, todo_next);
+function todo_next(result = true) {
+  if (result) {
+    var f = todo.pop();
+    if (f) {
+      process.nextTick(f, db, todo_next);
+    }
   }
 }
 
@@ -39,7 +41,7 @@ function closeDatabase(db, next) {
 
   console.log('*** closeDatabase...');
 
-  db.close(next);
+  db.close(next(true));
 
 }
 
@@ -50,7 +52,6 @@ function createDatabase(db, next) {
   db.serialize(function() {
 
     var sql = '';
-    var abort = false;
 
     // create database structure
     // FinancialType
@@ -58,43 +59,37 @@ function createDatabase(db, next) {
     db.run(sql, [], function(error) {
       if (error) {
         console.log('Error creating FinancialType table: ' + error);
-        abort = true;
-      } else {
-        console.log('CREATE TABLE FinancialType...OK');
-        next();
       }
     });
-    if (abort) { return; }
 
-    // // Financial
-    // sql = 'CREATE TABLE Financial (id INTEGER PRIMARY KEY AUTOINCREMENT, code TEXT UNIQUE NOT NULL, name TEXT UNIQUE NOT NULL, financialTypeId INTEGER NOT NULL, startDate INTEGER NOT NULL, endDate INTEGER NULL);';
-    // db.run(sql, [], function(error) {
-    //   if (error) {
-    //     console.log('Error creating Financial table: ' + error);
-    //     abort = true;
-    //   }
-    // });
-    // if (abort) { return; }
-    //
+    // Financial
+    sql = 'CREATE TABLE Financial (id INTEGER PRIMARY KEY AUTOINCREMENT, code TEXT UNIQUE NOT NULL, name TEXT UNIQUE NOT NULL, financialTypeId INTEGER NOT NULL, startDate INTEGER NOT NULL, endDate INTEGER NULL);';
+    db.run(sql, [], function(error) {
+      if (error) {
+        console.log('Error creating Financial table: ' + error);
+      }
+    });
+
     // // Relationship
     // sql = 'CREATE TABLE Relationship (id INTEGER PRIMARY KEY AUTOINCREMENT, financialId INTEGER NOT NULL, relatedId INTEGER NOT NULL, startDate INTEGER NOT NULL, endDate INTEGER NULL);';
     // db.run(sql, [], function(error) {
     //   if (error) {
     //     console.log('Error creating Relationship table: ' + error);
-    //     abort = true;
     //   }
     // });
-    // if (abort) { return; }
     //
     // // Performance
     // sql = 'CREATE TABLE Performance (id INTEGER PRIMARY KEY AUTOINCREMENT, financialId INTEGER NOT NULL, startDate INTEGER NOT NULL, endDate INTEGER NOT NULL, netReturn REAL NOT NULL, grossReturn REAL NOT NULL, startMarketValue REAL NOT NULL, endMarketValue REAL NOT NULL);';
     // db.run(sql, [], function(error) {
     //   if (error) {
     //     console.log('Error creating Performance table: ' + error);
-    //     abort = true;
     //   }
     // });
-    // if (abort) { return; }
+
+    // serialize a no-op sql statement to call "next()";
+    db.all('select 1',[], function(error, rows) {
+      next(true);
+    });
 
   });
 
@@ -105,19 +100,31 @@ function importFinancialType(db, next) {
   console.log('*** importFinancialType...');
 
   var source = new fs.createReadStream('./FinancialType.csv')
-  source.on('error', function(errror) { console.log('SOURCE: ' + error); });
+  source.on('error', function(error) {
+    console.log('SOURCE: ' + error);
+    next(false);
+  });
 
   var lr = new LineReader({objectMode: true});
-  lr.on('error', function(error) { console.log('LINEREADER: ' + error); });
+  lr.on('error', function(error) {
+    console.log('LINEREADER: ' + error);
+    next(false);
+  });
 
   var csv = new CsvParser({objectMode: true, useHeaders: true});
-  csv.on('error', function(error) { console.log('CSVPARSER: ' + error); });
+  csv.on('error', function(error) {
+    console.log('CSVPARSER: ' + error);
+    next(false);
+  });
 
   var s3target = new Sqlite3Target({objectMode: true},
     db, 'FinancialType',
     ['type_code', 'type_name'], ['code', 'name']
   );
-  s3target.on('error', function(error) { console.log('SQLITE3TARGET: ' + error); });
+  s3target.on('error', function(error) {
+    console.log('SQLITE3TARGET: ' + error);
+    next(false)
+  });
   s3target.on('finish', next);
 
   source.pipe(lr).pipe(csv).pipe(s3target);
