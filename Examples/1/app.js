@@ -18,8 +18,11 @@ class Example1 {
     this._stack.push(this.importFinancialType);
     this._stack.push(this.importFinancial);
     this._stack.push(this.importRelationship);
+    this._stack.push(this.importPerformance);
     this._stack.push(this.queryFinancialType);
     this._stack.push(this.queryFinancial);
+    this._stack.push(this.queryRelationship);
+    this._stack.push(this.queryPerformance);
     this._stack.push(this.closeDatabase);
     this._stack.push(this.done)
 
@@ -86,13 +89,13 @@ class Example1 {
         }
       });
 
-      // // Performance
-      // sql = 'CREATE TABLE Performance (id INTEGER PRIMARY KEY AUTOINCREMENT, financialId INTEGER NOT NULL, startDate INTEGER NOT NULL, endDate INTEGER NOT NULL, netReturn REAL NOT NULL, grossReturn REAL NOT NULL, startMarketValue REAL NOT NULL, endMarketValue REAL NOT NULL);';
-      // db.run(sql, [], function(error) {
-      //   if (error) {
-      //     console.log('Error creating Performance table: ' + error);
-      //   }
-      // });
+      // Performance
+      sql = 'CREATE TABLE Performance (id INTEGER PRIMARY KEY AUTOINCREMENT, financialId INTEGER NOT NULL, startDate INTEGER NOT NULL, endDate INTEGER NOT NULL, netReturn REAL NOT NULL, grossReturn REAL NOT NULL, startMarketValue REAL NOT NULL, endMarketValue REAL NOT NULL);';
+      me._db.run(sql, [], function(error) {
+        if (error) {
+          console.log('Error creating Performance table: ' + error);
+        }
+      });
 
       // serialize a no-op sql statement to call "next()";
       me._db.all('select 1',[], function(error, rows) {
@@ -215,6 +218,7 @@ class Example1 {
       me.next(false);
     });
 
+    // var ownerTable = new Sqlite3Table({objectMode: true, log: function(msg) { console.log(msg); }},
     var ownerTable = new Sqlite3Table({objectMode: true},
       me._db, 'Financial',
       ['Owner'], ['code'],
@@ -235,7 +239,7 @@ class Example1 {
       me.next(false);
     });
 
-    var s3Target = new Sqlite3Target({objectmode: true},
+    var s3Target = new Sqlite3Target({objectMode: true, log: (message) => { console.log("s3Target: " + message); }},
       me._db, 'Relationship',
       ['ownerId', 'ownedId', 'StartDate', 'EndDate'],
       ['ownerId', 'ownedId', 'startDate', 'endDate']
@@ -246,7 +250,57 @@ class Example1 {
     });
     s3Target.on('finish', () => { me.next(); });
 
-    source.pipe(lr).pipe(csv).pipe(ownerTable).pipe(ownedTable).pipe(s3Target);
+    source.pipe(lr).pipe(csv).pipe(ownedTable).pipe(ownerTable).pipe(s3Target);
+
+  }
+
+  importPerformance() {
+
+    console.log('*** importPerformance...');
+
+    var me = this;
+
+    var source = fs.createReadStream('./Performance.csv');
+    source.on('error', function(error) {
+      console.log('SOURCE: ' + error)
+      me.next(false);
+    });
+
+    var lr = new LineReader({objectMode: true});
+    lr.on('error', function(error) {
+      console.log('LINEREADER: ' + error)
+      me.next(false);
+    });
+
+    var csv = new CsvParser({objectMode: true, useHeaders: true});
+    csv.on('error', function(error) {
+      console.log('CSVPARSER: ' + error)
+      me.next(false);
+    });
+
+    // var ownerTable = new Sqlite3Table({objectMode: true, log: function(msg) { console.log(msg); }},
+    var s3Table = new Sqlite3Table({objectMode: true},
+      me._db, 'Financial',
+      ['Code'], ['code'],
+      ['financialId'], ['id']
+    );
+    s3Table.on('error', function(error) {
+      console.log('S3TABLE: ' + error)
+      me.next(false);
+    });
+
+    var s3Target = new Sqlite3Target({objectMode: true, log: (message) => { console.log("s3Target: " + message); }},
+      me._db, 'Performance',
+      ['financialId', 'StartDate', 'EndDate', 'NetReturn', 'GrossReturn', 'StartMarketValue', 'EndMarketValue'],
+      ['financialId', 'startDate', 'endDate',  'netReturn', 'grossReturn', 'startMarketValue', 'endMarketValue']
+    );
+    s3Target.on('error', function(error) {
+      console.log('S3TARGET: ' + error)
+      me.next(false);
+    });
+    s3Target.on('finish', () => { me.next(); });
+
+    source.pipe(lr).pipe(csv).pipe(s3Table).pipe(s3Target);
 
   }
 
@@ -283,6 +337,46 @@ class Example1 {
       } else {
         rows.forEach(function(row) {
           console.log(row.id + ', ' + row.code + ', ' + row.name + ', ' + row.financialTypeId + ', ' + row.startDate + ', ' + row.endDate);
+        });
+        me.next();
+      }
+    });
+
+  }
+
+  queryRelationship() {
+
+    console.log('*** queryRelationship...');
+    console.log('id, ownerId, ownedId, startDate, endDate');
+
+    var me = this;
+
+    me._db.all("SELECT id, ownerId, ownedId, startDate, endDate FROM Relationship ORDER BY ownerId ASC", [], function(error, rows) {
+      if (error) {
+        console.log('queryRelationship: ' + error);
+      } else {
+        rows.forEach(function(row) {
+          console.log(row.id + ', ' + row.ownerId + ', ' + row.ownedId + ', ' + row.startDate + ', ' + row.endDate);
+        });
+        me.next();
+      }
+    });
+
+  }
+
+  queryPerformance() {
+
+    console.log('*** queryPerformance...');
+    console.log('id, financialId, startDate, endDate, netReturn, grossReturn, startMarketValue, endMarketValue');
+
+    var me = this;
+
+    me._db.all("SELECT id, financialId, startDate, endDate, netReturn, grossReturn, startMarketValue, endMarketValue FROM Performance ORDER BY financialId ASC, startDate ASC", [], function(error, rows) {
+      if (error) {
+        console.log('queryPerformance: ' + error);
+      } else {
+        rows.forEach(function(row) {
+          console.log(row.id + ', ' + row.financialId + ', ' +  row.startDate + ', ' + row.endDate + ', ' + row.netReturn + ', ' + row.grossReturn + ', ' + row.startMarketValue + ', ' + row.endMarketValue);
         });
         me.next();
       }
