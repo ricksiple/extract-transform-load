@@ -177,7 +177,10 @@ class Example1 {
 
     var s3target = new Sqlite3Target({objectMode: true},
       me._db, 'Financial',
-      ['Code', 'Name', 'financialTypeId', 'StartDate', 'EndDate'], ['code', 'name', 'financialTypeId', 'startDate', 'endDate']
+      // ['Code', 'Name', 'financialTypeId', 'StartDate', 'EndDate'],
+      // ['code', 'name', 'financialTypeId', 'startDate', 'endDate']
+      ['Code', 'Name', 'financialTypeId', 'StartDate'],
+      ['code', 'name', 'financialTypeId', 'startDate']
     );
     s3target.on('error', function(error) {
       console.log('SQLITE3TARGET: ' + error);
@@ -212,48 +215,38 @@ class Example1 {
       me.next(false);
     });
 
-    var ownedTable = null;
-    var ownerTable = null;
-    var s3Target = null;
-
-    var createOwnedTable = function() {
-      ownedTable = new Sqlite3Table({objectMode: true},
-        me._db, 'Financial',
-        ['Owned'], ['code'],
-        ['ownedId'], ['id'],
-        createS3Target
-      );
-      ownerTable.on('error', function(error) {
-        console.log('OWNEDTABLE: ' + error)
-        me.next(false);
-      });
-    }
-
-    var createS3Target = function() {
-      s3Target = new Sqlite3Target({objectmode: true},
-        me._db, 'Relationship',
-        ['ownerId', 'ownedId', 'StartDate', 'EndDate'],
-        ['ownerId', 'ownedId', 'startDate', 'endDate']
-      );
-      s3Target.on('error', function(error) {
-        console.log('S3TARGET: ' + error)
-        me.next(false);
-      });
-      s3Target.on('finish', () => { me.next(); });
-
-      source.pipe(lr).pipe(csv).pipe(ownerTable).pipe(ownedTable).pipe(s3Target);
-    }
-
-    ownerTable = new Sqlite3Table({objectMode: true},
+    var ownerTable = new Sqlite3Table({objectMode: true},
       me._db, 'Financial',
       ['Owner'], ['code'],
-      ['ownerId'], ['id'],
-      createOwnedTable
+      ['ownerId'], ['id']
     );
     ownerTable.on('error', function(error) {
       console.log('OWNERTABLE: ' + error)
       me.next(false);
     });
+
+    var ownedTable = new Sqlite3Table({objectMode: true},
+      me._db, 'Financial',
+      ['Owned'], ['code'],
+      ['ownedId'], ['id']
+    );
+    ownedTable.on('error', function(error) {
+      console.log('OWNEDTABLE: ' + error)
+      me.next(false);
+    });
+
+    var s3Target = new Sqlite3Target({objectmode: true},
+      me._db, 'Relationship',
+      ['ownerId', 'ownedId', 'StartDate', 'EndDate'],
+      ['ownerId', 'ownedId', 'startDate', 'endDate']
+    );
+    s3Target.on('error', function(error) {
+      console.log('S3TARGET: ' + error)
+      me.next(false);
+    });
+    s3Target.on('finish', () => { me.next(); });
+
+    source.pipe(lr).pipe(csv).pipe(ownerTable).pipe(ownedTable).pipe(s3Target);
 
   }
 
