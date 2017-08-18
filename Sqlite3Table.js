@@ -6,6 +6,8 @@ class Sqlite3Table extends stream.Transform {
   constructor(options, db, tableName, rowMatch, tableMatch, rowLookup, tableLookup) {
     super(options);
 
+    this.log = options.log || function(msg) { };
+
     this.rowMatch = rowMatch;
     this.tableMatch = tableMatch;
     this.rowLookup = rowLookup;
@@ -29,8 +31,12 @@ class Sqlite3Table extends stream.Transform {
     var keys;
     var value;
 
-    db.all('select ' + tableMatch.join(',') + ',' + tableLookup.join(',') + ' from ' + tableName + ';', [], function(error, rows) {
+    var sql = 'select ' + tableMatch.join(',') + ',' + tableLookup.join(',') + ' from ' + tableName + ';'
+    me.log('Sqlite3Table: SQL: ' + sql);
+
+    db.all(sql, [], function(error, rows) {
       if (error) {
+        me.log('Sqlite3Table: Error: ' + error);
         if (callback) { this._initError = error; }
       } else {
         for (var row = 0; row < rows.length; row++) {
@@ -42,6 +48,10 @@ class Sqlite3Table extends stream.Transform {
           for (var field = 0; field < me.fieldCount; field++) {
             value[tableLookup[field]] = rows[row][tableLookup[field]];
           }
+          me.log('Sqlite3Table: keys:');
+          me.log(keys);
+          me.log('values: ');
+          me.log(value);
           me.dictionary.add(keys, value);
         }
 
@@ -59,10 +69,15 @@ class Sqlite3Table extends stream.Transform {
   }
 
   _transform(chunk, encoding, transform_complete) {
+    this.log('Sqlite3Table: Queued chunk:');
+    this.log(chunk);
     this._initData = {chunk: chunk, encoding: encoding, transform_complete: transform_complete};
   }
 
   _transform_impl(chunk, encoding, transform_complete) {
+
+    this.log('Sqlite3Table: Chunk In: ')
+    this.log(chunk);
 
     if (this._initError) {
       transform_complete(this._initError);
@@ -81,6 +96,9 @@ class Sqlite3Table extends stream.Transform {
         chunk[this.rowLookup[field]] = value[this.tableLookup[field]];
       }
     }
+
+    this.log('Sqlite3Table: Chunk Out: ')
+    this.log(chunk);
 
     this.push(chunk);
     transform_complete();
