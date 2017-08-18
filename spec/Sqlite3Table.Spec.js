@@ -62,22 +62,96 @@ describe('Sqlite3Table', function() {
       target.on('error', function(error) { fail('TARGET: ' + error); done(); });
       target.on('finish', function() {
         target.assert();
-        done()
+        done();
       });
 
       var s3t = new Sqlite3Table({objectMode: true},
         db, 'RoleType',
         ['role'], ['code'],
-        ['roleId'], ['id'],
-        function(error) {
-          expect(error).toBeUndefined();
-          source.pipe(s3t).pipe(target);
-        }
+        ['roleId'], ['id']
       );
+
+      source.pipe(s3t).pipe(target);
 
     });
 
+    it('should throw an error if the rowMatch/tableMatch lengths are different.', function(done) {
+
+      var source = new PipeSource({objectMode: true});
+      source.arrange({name: 'Adam', role: 'MGR'});
+      source.arrange({name: 'Bob', role: 'DEV'});
+      source.arrange({name: 'Carl', role: 'TST'});
+      source.on('error', function(error) { fail('SOURCE: ' + error); done(); });
+
+      var target = new PipeTarget({objectMode: true},
+        function(actual, expected) {
+          expect(actual).toEqual(expected);
+          return true;
+        }
+      );
+      target.arrange({name: 'Adam', role: 'MGR', roleId: 2});
+      target.arrange({name: 'Bob', role: 'DEV', roleId: 1});
+      target.arrange({name: 'Carl', role: 'TST', roleId: 3});
+      target.on('error', function(error) { fail('TARGET: ' + error); done(); });
+      target.on('finish', function() {
+        fail("Sqlite3Table didn't throw expected error.");
+        done();
+      });
+
+      var s3t = new Sqlite3Table({objectMode: true},
+        db, 'RoleType',
+        ['role', 'oops'], ['code'],
+        ['roleId'], ['id']
+      );
+      s3t.on('error', function(error) {
+        // console.log(error);
+        expect(error).toEqual(new Error('Number of table key fields (1) does not match number of row key fields(2).'));
+        done();
+      });
+
+      source.pipe(s3t).pipe(target);
+
+    });
+
+  it('should throw an error if the rowLookup/tableLookup lengths are different.', function(done) {
+
+    var source = new PipeSource({objectMode: true});
+    source.arrange({name: 'Adam', role: 'MGR'});
+    source.arrange({name: 'Bob', role: 'DEV'});
+    source.arrange({name: 'Carl', role: 'TST'});
+    source.on('error', function(error) { fail('SOURCE: ' + error); done(); });
+
+    var target = new PipeTarget({objectMode: true},
+      function(actual, expected) {
+        expect(actual).toEqual(expected);
+        return true;
+      }
+    );
+    target.arrange({name: 'Adam', role: 'MGR', roleId: 2});
+    target.arrange({name: 'Bob', role: 'DEV', roleId: 1});
+    target.arrange({name: 'Carl', role: 'TST', roleId: 3});
+    target.on('error', function(error) { fail('TARGET: ' + error); done(); });
+    target.on('finish', function() {
+      fail("Sqlite3Table didn't throw expected error.");
+      done();
+    });
+
+    var s3t = new Sqlite3Table({objectMode: true},
+      db, 'RoleType',
+      ['role'], ['code'],
+      ['roleId', 'oops'], ['id']
+    );
+    s3t.on('error', function(error) {
+      // console.log(error);
+      expect(error).toEqual(new Error('Number of table lookup fields (1) does not match number of row lookup fields(2).'));
+      done();
+    });
+
+    source.pipe(s3t).pipe(target);
+
   });
+
+});
 
   describe('mulitple key fields', function() {
 
@@ -150,12 +224,10 @@ describe('Sqlite3Table', function() {
       var s3t = new Sqlite3Table({objectMode: true},
         db, 'RoleType',
         ['roleType', 'role'], ['typeCode', 'code'],
-        ['roleId', 'roleName'], ['id', 'name'],
-        function(error) {
-          expect(error).toBeUndefined();
-          source.pipe(s3t).pipe(target);
-        }
+        ['roleId', 'roleName'], ['id', 'name']
       );
+
+      source.pipe(s3t).pipe(target);
 
     });
 

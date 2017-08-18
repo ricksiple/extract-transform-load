@@ -3,7 +3,7 @@ var Mkd = require('./util/MultiKeyDictionary');
 
 class Sqlite3Table extends stream.Transform {
 
-  constructor(options, db, tableName, rowMatch, tableMatch, rowLookup, tableLookup, callback) {
+  constructor(options, db, tableName, rowMatch, tableMatch, rowLookup, tableLookup) {
     super(options);
 
     this.rowMatch = rowMatch;
@@ -11,17 +11,13 @@ class Sqlite3Table extends stream.Transform {
     this.rowLookup = rowLookup;
     this.tableLookup = tableLookup;
 
+    this.initError = null;
+
     if (rowMatch.length !== tableMatch.length) {
-      if (callback) {
-        callback('Number of table key fields (' + tableMatch.length + ') does not match number of row key fields(' +  rowMatch.length + ').');
-        return;
-      }
+      this._initError = new Error('Number of table key fields (' + tableMatch.length + ') does not match number of row key fields(' +  rowMatch.length + ').');
     }
     if (rowLookup.length !== tableLookup.length) {
-      if (callback) {
-        callback('Number of table lookup fields (' + tableLookup.length + ') does not match number of row lookup fields(' +  rowLookup.length + ').');
-        return;
-      }
+      this._initError = new Error('Number of table lookup fields (' + tableLookup.length + ') does not match number of row lookup fields(' +  rowLookup.length + ').');
     }
 
     this.keyCount = tableMatch.length;
@@ -35,7 +31,7 @@ class Sqlite3Table extends stream.Transform {
 
     db.all('select ' + tableMatch.join(',') + ',' + tableLookup.join(',') + ' from ' + tableName + ';', [], function(error, rows) {
       if (error) {
-        if (callback) { callback(error); }
+        if (callback) { this._initError = error; }
       } else {
         for (var row = 0; row < rows.length; row++) {
           keys = [];
@@ -48,13 +44,30 @@ class Sqlite3Table extends stream.Transform {
           }
           me.dictionary.add(keys, value);
         }
-        if (callback) { callback(); }
+
+        // put in real transform implemenation
+        me._transform = me._transform_impl;
+
+        // did  we queue a chunk before the query completed?
+        if (me._initData) {
+          process.nextTick(() => me._transform(me._initData.chunk, me._initData.encoding, me._initData.transform_complete));
+        }
+
       }
     });
 
   }
 
   _transform(chunk, encoding, transform_complete) {
+    this._initData = {chunk: chunk, encoding: encoding, transform_complete: transform_complete};
+  }
+
+  _transform_impl(chunk, encoding, transform_complete) {
+
+    if (this._initError) {
+      transform_complete(this._initError);
+      return;
+    }
 
     var keys = [];
     for (var key = 0; key < this.keyCount; key++) {
