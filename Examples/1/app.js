@@ -180,10 +180,8 @@ class Example1 {
 
     var s3target = new Sqlite3Target({objectMode: true},
       me._db, 'Financial',
-      // ['Code', 'Name', 'financialTypeId', 'StartDate', 'EndDate'],
-      // ['code', 'name', 'financialTypeId', 'startDate', 'endDate']
-      ['Code', 'Name', 'financialTypeId', 'StartDate'],
-      ['code', 'name', 'financialTypeId', 'startDate']
+      ['Code', 'Name', 'financialTypeId', 'StartDate', 'EndDate'],
+      ['code', 'name', 'financialTypeId', 'startDate', 'endDate']
     );
     s3target.on('error', function(error) {
       console.log('SQLITE3TARGET: ' + error);
@@ -292,7 +290,8 @@ class Example1 {
     var s3Target = new Sqlite3Target({objectMode: true, log: (message) => { console.log("s3Target: " + message); }},
       me._db, 'Performance',
       ['financialId', 'StartDate', 'EndDate', 'NetReturn', 'GrossReturn', 'StartMarketValue', 'EndMarketValue'],
-      ['financialId', 'startDate', 'endDate',  'netReturn', 'grossReturn', 'startMarketValue', 'endMarketValue']
+      ['financialId', 'startDate', 'endDate',  'netReturn', 'grossReturn', 'startMarketValue', 'endMarketValue'],
+      ['general', 'datetime', 'datetime',  'general', 'general', 'general', 'general']
     );
     s3Target.on('error', function(error) {
       console.log('S3TARGET: ' + error)
