@@ -62,7 +62,7 @@ class Sqlite3Target extends stream.Writable {
     // initial statment setup
     me.db.serialize(function() {
       me.stmt = me.db.prepare(me.sql, (error) => {
-        if (error) { console.log('Sqlite3Target: Error preparing statement: "' + me.sql + '": ' + error)};
+        write_complete(error);
       });
       me.db.run('begin transaction', (error) => {
         me._write = me._write_impl;
