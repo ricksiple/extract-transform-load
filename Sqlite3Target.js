@@ -52,7 +52,6 @@ class Sqlite3Target extends stream.Writable {
     }
 
     this.sql = 'INSERT INTO ' + table_name + ' (' + sql_fields + ') VALUES (' + sql_params + ')';
-    console.log(this.sql);
 
   }
 
