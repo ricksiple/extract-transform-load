@@ -2,27 +2,26 @@ var Stack = require('../util/stack');
 
 describe('Stack', function() {
 
-    it('should return pushed items in same order.', function() {
+    it('should return pushed items in reverse order.', function() {
 
+      var q = new Stack();
 
-      var s = new Stack();
+      expect(q.length()).toBe(0);
+      q.push('first');
+      expect(q.length()).toBe(1);
+      q.push('second');
+      expect(q.length()).toBe(2);
+      q.push('third');
+      expect(q.length()).toBe(3);
 
-      expect(s.length()).toBe(0);
-      s.push('first');
-      expect(s.length()).toBe(1);
-      s.push('second');
-      expect(s.length()).toBe(2);
-      s.push('third');
-      expect(s.length()).toBe(3);
+      expect(q.pop()).toBe('third');
+      expect(q.length()).toBe(2);
+      expect(q.pop()).toBe('second');
+      expect(q.length()).toBe(1);
+      expect(q.pop()).toBe('first');
+      expect(q.length()).toBe(0);
 
-      expect(s.pop()).toBe('first');
-      expect(s.length()).toBe(2);
-      expect(s.pop()).toBe('second');
-      expect(s.length()).toBe(1);
-      expect(s.pop()).toBe('third');
-      expect(s.length()).toBe(0);
-
-      expect(function() { s.pop(); }).toThrowError(Error, 'Called pop() on empty stack.');
+      expect(function() { q.pop(); }).toThrowError(Error, 'Called pop() on empty stack.');
 
     });
 

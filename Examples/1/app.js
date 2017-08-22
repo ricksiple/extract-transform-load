@@ -4,33 +4,33 @@ var LineReader = require('../../LineReader');
 var CsvParser = require('../../CsvParser');
 var Sqlite3Target = require('../../Sqlite3Target');
 var Sqlite3Table = require('../../Sqlite3Table');
-var Stack = require('../../util/stack');
+var Queue = require('../../util/queue');
 
 class Example1 {
 
   constructor() {
 
-    this._stack = new Stack();
+    this._queue = new Stack();
 
     // action stack
-    this._stack.push(this.openDatabase);
-    this._stack.push(this.createDatabase);
-    this._stack.push(this.importFinancialType);
-    this._stack.push(this.importFinancial);
-    this._stack.push(this.importRelationship);
-    this._stack.push(this.importPerformance);
-    this._stack.push(this.queryFinancialType);
-    this._stack.push(this.queryFinancial);
-    this._stack.push(this.queryRelationship);
-    this._stack.push(this.queryPerformance);
-    this._stack.push(this.closeDatabase);
-    this._stack.push(this.done)
+    this._queue.push(this.openDatabase);
+    this._queue.push(this.createDatabase);
+    this._queue.push(this.importFinancialType);
+    this._queue.push(this.importFinancial);
+    this._queue.push(this.importRelationship);
+    this._queue.push(this.importPerformance);
+    this._queue.push(this.queryFinancialType);
+    this._queue.push(this.queryFinancial);
+    this._queue.push(this.queryRelationship);
+    this._queue.push(this.queryPerformance);
+    this._queue.push(this.closeDatabase);
+    this._queue.push(this.done)
 
   }
 
   next(result = true) {
     if (result) {
-      var f = this._stack.pop();
+      var f = this._queue.pop();
       if (f) {
         process.nextTick(() => f.call(this));
       }

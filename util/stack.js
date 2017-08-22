@@ -2,29 +2,19 @@ class Stack {
 
   constructor() {
     this._length = 0;
-    this._head = null;
-    this._last = null;
+    this._top = null;
   }
 
   push(item) {
-    var wrap = {next: null, payload: item};
-    if (this._last) {
-      this._last.next = wrap;
-    }
-    this._last = wrap;
-    if (!(this._head)) {
-      this._head = wrap;
-    }
+    var wrap = {previous: this._top, payload: item};
+    this._top = wrap;
     this._length++;
   }
 
   pop() {
-    if (this._head) {
-      var wrap = this._head;
-      this._head = wrap.next;
-      if (!(this._head)) {
-        this._last = null;
-      }
+    if (this._top) {
+      var wrap = this._top;
+      this._top = wrap.previous;
       this._length--;
       return wrap.payload;
     } else {
