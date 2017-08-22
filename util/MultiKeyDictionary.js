@@ -39,14 +39,4 @@ class MultiKeyDictionary {
 
 }
 
-// var md = new MultiDictionary(2);
-// md.add(['x','y'],{name: 'Rick'});
-// md.add(['x','z'],{name: 'Bob'});
-// md.add(['z','z'],{name: 'Joan'});
-// console.log(md.table);
-// console.log(md.find(['x', 'y']));
-// console.log(md.find(['x', 'z']));
-// console.log(md.find(['x', 'x']));
-// console.log(md.find(['z', 'z']));
-
 module.exports = MultiKeyDictionary;

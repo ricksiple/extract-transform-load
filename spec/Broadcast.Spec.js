@@ -16,10 +16,10 @@ function broadcast_duplicate(chunk) {
 }
 
 var test_data = [];
-test_data.push({id:1,name:'Rick',role:'husband'});
-test_data.push({id:2,name:'Heather',role:'wife'});
-test_data.push({id:3,name:'Becky',role:'daughter'});
-test_data.push({id:4,name:'Zach',role:'son'});
+test_data.push({id:1,name:'Homer',role:'husband'});
+test_data.push({id:2,name:'Marge',role:'wife'});
+test_data.push({id:3,name:'Lisa',role:'daughter'});
+test_data.push({id:4,name:'Bart',role:'son'});
 
 describe('Broadcast', function() {
 
