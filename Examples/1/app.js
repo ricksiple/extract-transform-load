@@ -370,7 +370,7 @@ class Example1 {
 
     var me = this;
 
-    me._db.all("SELECT id, financialId, startDate, endDate, netReturn, grossReturn, startMarketValue, endMarketValue FROM Performance ORDER BY financialId ASC, startDate ASC", [], function(error, rows) {
+    me._db.all("SELECT id, financialId, date(startDate, 'unixepoch', 'localtime') as startDate, date(endDate, 'unixepoch', 'localtime') as endDate, netReturn, grossReturn, startMarketValue, endMarketValue FROM Performance ORDER BY financialId ASC, startDate ASC", [], function(error, rows) {
       if (error) {
         console.log('queryPerformance: ' + error);
       } else {
