@@ -1,6 +1,3 @@
-var Sqlite3 = require('Sqlite3').verbose();
-var Queue = require('../../util/queue');
-
 var fs = require('fs');
 var LineReader = require('../../LineReader');
 var CsvParser = require('../../CsvParser');
@@ -8,9 +5,11 @@ var Sqlite3Target = require('../../Sqlite3Target');
 
 class ImportFinancialType {
 
-  run(next, db) {
+  name() {
+    return 'Import FinancialType';
+  }
 
-    console.log('*** importFinancialType...');
+  run(next, db) {
 
     var source = new fs.createReadStream('./FinancialType.csv')
     source.on('error', function(error) {
