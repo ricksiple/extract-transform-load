@@ -5,14 +5,16 @@ var ImportFinancialType = require('./ImportFinancialType');
 
 var Queue = require('../../util/queue');
 
-class ImportAll {
+class ImportProcess {
 
   constructor() {
     this._actions = new Queue();
-    this._actions.push(() => { return new CreateDatabase(); });
-    this._actions.push(() => { return new ImportFinancialType(); });
   }
 
+  add(action) {
+    this._actions.push(action);
+  }
+  
   run() {
     this._openDatabase();
   }
@@ -51,5 +53,4 @@ class ImportAll {
 
 }
 
-var task = new ImportAll();
-task.run();
+module.exports = ImportProcess;
