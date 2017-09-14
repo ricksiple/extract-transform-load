@@ -1,35 +1,74 @@
 var Sqlite3 = require('sqlite3').verbose();
 var stream = require('stream');
 
-var Queue = require('../util/queue.js');
+var Queue = require('./util/queue.js');
 
-class Sqlite3Source extends stream.readable {
+class Sqlite3Source extends stream.Readable {
 
-  constructor(options, db, table_name, stream_fields, table_fields, table_types) {
+  constructor(options, db, query) {
     super(options);
 
     this.queue = new Queue();
-    this.EOD = false;
+    this.isActive = false;
+    this.isEOD = false;
 
-    // Create and execute statement.each().
-    // row_callback handler should put things in this.queue.
-    // complete_callback handler should set this.EOD.
+    var me = this;
+
+    db.serialize(() => {
+      me.stmt = db.prepare(query);
+      me.stmt.each((err, row) => me._rowCallback(err, row), (err, rowCount) => { me._completeCallback(err, rowCount); });
+    });
+
+  }
+
+  _pushFromQueue() {
+
+    // this.push() until push() returns false
+    // or the queue is empty
+    // console.log('_pushFromQueue:', 'isActive', this.isActive, 'queue.length()', this.queue.length());
+    while (this.isActive && this.queue.length()) {
+      this.isActive = this.push(this.queue.pop());
+    }
+
+    // console.log('_pushFromQueue:', 'isActive', this.isActive, 'isEOD', this.isEOD);
+    if (this.isActive && this.isEOD) {
+      this.push(null);
+    }
 
   }
 
   _read(size) {
 
-    // is there anything in the queue?
-    if (this.queue.length) {
-     this.push(this.queue.pop());
-    } else {
+    // console.log('_read:');
 
-      // queue is empty, EOD?
-      if (this.EOD) {
-        this.push(null);
-      }
+    // OK to call this.push() until it returns false
+    this.isActive = true;
 
-    }
+    // push() whatever may be in the queue
+    process.nextTick(() => { this._pushFromQueue(); });
+
+  }
+
+  _rowCallback(err, row) {
+
+    // console.log("_rowCallback:", row);
+
+    this.queue.push(row);
+
+    // push() whatever may be in the queue
+    process.nextTick(() => { this._pushFromQueue(); });
+
+  }
+
+  _completeCallback() {
+
+    // console.log('_completeCallback:')
+
+    this.isEOD = true;
+    this.stmt.finalize();
+
+    // push() whatever may be in the queue
+    process.nextTick(() => { this._pushFromQueue(); });
 
   }
 
