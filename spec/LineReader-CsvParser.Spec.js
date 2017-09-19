@@ -9,7 +9,7 @@ describe('CSV pipeline', function() {
 
     var source = new PipeSource({decodeStrings: false, encoding:'utf8'});
     source.on('error', function(error) { console.log('PipeSource: ' + error); });
-    source.arrange('"id","name","handle"\r\n4,"Rick","Kojoto"\r\n2,"Heather","Koneko"\r\n1,"Becky","Gecko"\r\n3,"Zach","Techno"');
+    source.arrange('"id","name","handle"\r\n4,"Homer","Baldy"\r\n2,"Marge","Pearls"\r\n1,"Lisa","Smarty"\r\n3,"Bart","Trouble"');
 
     var reader = new LineReader({decodeStrings: false, encoding:'utf8'});
     reader.on('error', function(error) { console.log('LineReader: ' + error); });
@@ -25,10 +25,10 @@ describe('CSV pipeline', function() {
       target.assert();
       done();
     });
-    target.arrange({id:4, name:'Rick', handle:'Kojoto'});
-    target.arrange({id:2, name:'Heather', handle:'Koneko'});
-    target.arrange({id:1, name:'Becky', handle:'Gecko'});
-    target.arrange({id:3, name:'Zach', handle:'Techno'});
+    target.arrange({id:4, name:'Homer', handle:'Baldy'});
+    target.arrange({id:2, name:'Marge', handle:'Pearls'});
+    target.arrange({id:1, name:'Lisa', handle:'Smarty'});
+    target.arrange({id:3, name:'Bart', handle:'Trouble'});
 
     source.pipe(reader).pipe(parser).pipe(target);
 
