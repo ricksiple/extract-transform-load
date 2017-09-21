@@ -1,6 +1,5 @@
 var fs = require('fs');
 
-
 class PopulateFinancialType {
 
   name() {
