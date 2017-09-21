@@ -10,7 +10,7 @@ describe('Sqlite3Source', () => {
 
   beforeEach((done) => {
 
-    target = new PipeTarget({objectMode: true} ,(actual, expected) => { console.log(actual, expected); return (actual.targetId === expected.targetId && actual.targetName === expected.targetName); });
+    target = new PipeTarget({objectMode: true} ,(actual, expected) => { return (actual.targetId === expected.targetId && actual.targetName === expected.targetName); });
 
     db = new Sqlite3.Database(':memory:');
     db.serialize(() => {
@@ -18,7 +18,6 @@ describe('Sqlite3Source', () => {
       db.run("INSERT INTO target (targetId, targetName) VALUES (1, 'Manny')");
       db.run("INSERT INTO target (targetId, targetName) VALUES (2, 'Moe')");
       db.run("INSERT INTO target (targetId, targetName) VALUES (3, 'Jack')", () => {
-        console.log('beforeEach() done.');
         done();
       });
     });
@@ -50,7 +49,6 @@ describe('Sqlite3Source', () => {
       done();
     });
 
-    console.log('source pipe target');
     source.pipe(target);
 
   });
