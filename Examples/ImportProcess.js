@@ -1,9 +1,6 @@
 var Sqlite3 = require('Sqlite3').verbose();
 
-var CreateDatabase = require('./CreateDatabase');
-var ImportFinancialType = require('./ImportFinancialType');
-
-var Queue = require('../../util/queue');
+var Queue = require('../util/queue');
 
 class ImportProcess {
 
@@ -14,7 +11,7 @@ class ImportProcess {
   add(action) {
     this._actions.push(action);
   }
-  
+
   run() {
     this._openDatabase();
   }
