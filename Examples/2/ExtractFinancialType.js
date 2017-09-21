@@ -1,5 +1,5 @@
-var Sqlite3Source = require("../Sqlite3Source");
-var CsvTarget = require("../CsvTarget");
+var Sqlite3Source = require("../../Sqlite3Source");
+var CsvTarget = require("../../CsvTarget");
 var fs = require('fs');
 
 class ExtractFinancialType {
@@ -16,8 +16,8 @@ class ExtractFinancialType {
 
     var target = fs.createWriteStream('./FinancialType.csv');
 
-    source.pipe(csv)pipe(target);
-     
+    source.pipe(csv).pipe(target);
+
   }
 
 }
