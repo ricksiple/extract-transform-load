@@ -12,7 +12,7 @@ class PopulateFinancialType {
         var stmt = db.prepare('INSERT INTO FinancialType (code, name) VALUES ($code, $name);');
         stmt.run({$code: 'P', $name: 'Portfolio'});
         stmt.run({$code: 'B', $name: 'Benchmark'});
-        stmt.finalize();
+        stmt.finalize(() => { next(); });
     });
 
   }
