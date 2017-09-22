@@ -1,4 +1,4 @@
-var Sqlite3 = require('sqlite3').verbose();
+// var Sqlite3 = require('sqlite3').verbose();
 var stream = require('stream');
 
 var Queue = require('./util/queue.js');
