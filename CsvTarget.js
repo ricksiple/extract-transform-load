@@ -10,7 +10,7 @@ class CsvTarget extends stream.Transform {
     this.fields = fields;
     this.headers = headers || this.fields;
     this.formats = formats;
-    this.EOL = options.EOL || '\r\n'
+
     if (!this.formats) {
       this.formats = [];
       for (var n = 0; n < this.fields.length; n++) {
@@ -27,11 +27,7 @@ class CsvTarget extends stream.Transform {
 
   _transform_first(chunk, encoding, transform_complete) {
 
-    var out = [];
-
-    out = this.headers.map(quoteString.format);
-    out.push(this.EOL);
-    this.push(out.join());
+    this.push(this.headers.map(quoteString.format).join());
 
     this._transform = this._transform_next;
     this._transform(chunk, encoding, transform_complete);
@@ -44,7 +40,6 @@ class CsvTarget extends stream.Transform {
     for (var n = 0; n < this.fields.length; n++) {
       out[n] = this.formats[n].format(chunk[this.fields[n]]);
     }
-    out.push(this.EOL);
 
     this.push(out.join());
 
