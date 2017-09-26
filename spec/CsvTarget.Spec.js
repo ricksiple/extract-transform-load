@@ -23,10 +23,10 @@ describe('CsvTarget', () => {
 
     source.on('error', (error) => { fail('SOURCE: ' + error); done(); });
 
-    target.arrange('"Employee Id","Employee Name","Employee Title"');
-    target.arrange('2,"John","Software Developer"');
-    target.arrange('1,"Betty","Software Tester"');
-    target.arrange('3,"Joan","Director"');
+    target.arrange('"Employee Id","Employee Name","Employee Title"\r\n');
+    target.arrange('2,"John","Software Developer"\r\n');
+    target.arrange('1,"Betty","Software Tester"\r\n');
+    target.arrange('3,"Joan","Director"\r\n');
     target.on('error', (error) => { fail('TARGET: ' + error); done(); });
     target.on('finish', done);
 
@@ -41,10 +41,10 @@ describe('CsvTarget', () => {
 
     source.on('error', (error) => { fail('SOURCE: ' + error); done(); });
 
-    target.arrange('"id","name","title"');
-    target.arrange('2,"John","Software Developer"');
-    target.arrange('1,"Betty","Software Tester"');
-    target.arrange('3,"Joan","Director"');
+    target.arrange('"id","name","title"\r\n');
+    target.arrange('2,"John","Software Developer"\r\n');
+    target.arrange('1,"Betty","Software Tester"\r\n');
+    target.arrange('3,"Joan","Director"\r\n');
     target.on('error', (error) => { fail('TARGET: ' + error); done(); });
     target.on('finish', done);
 
@@ -75,10 +75,10 @@ describe('CsvTarget', () => {
 
     source.on('error', (error) => { fail('SOURCE: ' + error); done(); });
 
-    target.arrange('"id","name","title"');
-    target.arrange('"2","John","Software Developer"');
-    target.arrange('"1","Betty","Software Tester"');
-    target.arrange('"3","Joan","Director"');
+    target.arrange('"id","name","title"\r\n');
+    target.arrange('"2","John","Software Developer"\r\n');
+    target.arrange('"1","Betty","Software Tester"\r\n');
+    target.arrange('"3","Joan","Director"\r\n');
     target.on('error', (error) => { fail('TARGET: ' + error); done(); });
     target.on('finish', done);
 

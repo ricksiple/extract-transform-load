@@ -1,6 +1,7 @@
 const stream = require('stream');
 
 var quoteString = { format: function(s) {   return '"' + s + '"'; } };
+var noFormat = { format: function(s) { return s; } };
 
 class CsvTarget extends stream.Transform {
 
@@ -30,8 +31,7 @@ class CsvTarget extends stream.Transform {
     var out = [];
 
     out = this.headers.map(quoteString.format);
-    out.push(this.EOL);
-    this.push(out.join());
+    this.push(out.join() + this.EOL);
 
     this._transform = this._transform_next;
     this._transform(chunk, encoding, transform_complete);
@@ -42,11 +42,13 @@ class CsvTarget extends stream.Transform {
 
     var out = [];
     for (var n = 0; n < this.fields.length; n++) {
-      out[n] = this.formats[n].format(chunk[this.fields[n]]);
+      if (chunk[this.fields[n]] === null) {
+        out[n] = this.formats[n].format('');
+      } else {
+        out[n] = this.formats[n].format(chunk[this.fields[n]]);
+      }
     }
-    out.push(this.EOL);
-
-    this.push(out.join());
+    this.push(out.join() + this.EOL);
 
     transform_complete();
   }
@@ -54,5 +56,6 @@ class CsvTarget extends stream.Transform {
 }
 
 CsvTarget.quoteString = quoteString;
+CsvTarget.noFormat = noFormat;
 
 module.exports = CsvTarget;
