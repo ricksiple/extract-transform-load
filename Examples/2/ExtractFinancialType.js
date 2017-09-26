@@ -5,7 +5,7 @@ var fs = require('fs');
 class ExtractFinancialType {
 
   name() {
-    return 'ExtractFinancialType';
+    return 'Extract FinancialType';
   }
 
   run(next, db) {

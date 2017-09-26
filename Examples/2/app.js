@@ -1,4 +1,4 @@
-var ImportProcess = require('../ImportProcess');
+var Process = require('../Process');
 
 var CreateDatabase = require('./CreateDatabase');
 
@@ -8,8 +8,11 @@ var PopulateRelationship = require('./PopulateRelationship');
 var PopulatePerformance = require('./PopulatePerformance');
 
 var ExtractFinancialType = require('./ExtractFinancialType');
+var ExtractFinancial = require('./ExtractFinancial');
+var ExtractRelationship = require('./ExtractRelationship');
+var ExtractPerformance = require('./ExtractPerformance');
 
-class ImportAll extends ImportProcess {
+class ExtractAll extends Process {
 
   constructor() {
     super();
@@ -22,10 +25,12 @@ class ImportAll extends ImportProcess {
     this.add(() => { return new PopulatePerformance(); });
 
     this.add(() => { return new ExtractFinancialType(); });
+    this.add(() => { return new ExtractFinancial(); });
+    this.add(() => { return new ExtractRelationship(); });
+    this.add(() => { return new ExtractPerformance(); });
 
   }
 
 }
 
-var importAll = new ImportAll();
-importAll.run();
+(new ExtractAll()).run();

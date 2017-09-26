@@ -1,4 +1,4 @@
-var ImportProcess = require('../ImportProcess');
+var Process = require('../Process');
 
 var CreateDatabase = require('./CreateDatabase');
 
@@ -12,7 +12,7 @@ var QueryFinancial = require('./QueryFinancial');
 var QueryRelationship = require('./QueryRelationship');
 var QueryPerformance = require('./QueryPerformance');
 
-class ImportAll extends ImportProcess {
+class ImportAll extends Process {
 
   constructor() {
     super();
@@ -33,5 +33,4 @@ class ImportAll extends ImportProcess {
 
 }
 
-var importAll = new ImportAll();
-importAll.run();
+(new ImportAll()).run();

@@ -2,7 +2,7 @@ var Sqlite3 = require('Sqlite3').verbose();
 
 var Queue = require('../util/queue');
 
-class ImportProcess {
+class Process {
 
   constructor() {
     this._actions = new Queue();
@@ -50,4 +50,4 @@ class ImportProcess {
 
 }
 
-module.exports = ImportProcess;
+module.exports = Process;

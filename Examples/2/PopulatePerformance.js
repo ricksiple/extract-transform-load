@@ -30,12 +30,12 @@ class PopulatePerformance {
       stmt.run({$financialId: 2, $startDate: '11/1/2016', $endDate: '11/28/2016', $netReturn: 1.9033, $grossReturn: 1.9422, $startMarketValue: 135947430.10, $endMarketValue: 138587760.86});
       stmt.run({$financialId: 2, $startDate: '12/1/2016', $endDate: '12/28/2016', $netReturn: 1.9940, $grossReturn: 2.0347, $startMarketValue: 138587760.86, $endMarketValue: 141407654.34});
 
-      stmt.run({$financialId: 4, $startDate: '4,1/1/2017', $endDate: '1/31/2017', $netReturn: 1.8647, $grossReturn: 1.9028, $startMarketValue: 512896217.00, $endMarketValue: 522655447.48});
-      stmt.run({$financialId: 4, $startDate: '4,2/1/2017', $endDate: '2/28/2017', $netReturn: 2.0268, $grossReturn: 2.0682, $startMarketValue: 522655447.48, $endMarketValue: 533464858.49});
-      stmt.run({$financialId: 4, $startDate: '4,3/1/2017', $endDate: '3/31/2017', $netReturn: 1.9600, $grossReturn: 2.0000, $startMarketValue: 533464858.49, $endMarketValue: 544134202.71});
-      stmt.run({$financialId: 4, $startDate: '4,4/1/2017', $endDate: '4/30/2017', $netReturn: 2.0318, $grossReturn: 2.0733, $startMarketValue: 544134202.71, $endMarketValue: 555415572.88});
-      stmt.run({$financialId: 4, $startDate: '4,5/1/2017', $endDate: '5/31/2017', $netReturn: 1.8739, $grossReturn: 1.9122, $startMarketValue: 555415572.88, $endMarketValue: 566036068.10});
-      stmt.run({$financialId: 4, $startDate: '4,6/1/2017', $endDate: '6/30/2017', $netReturn: 2.0215, $grossReturn: 2.0628, $startMarketValue: 566036068.10, $endMarketValue: 577712165.69});
+      stmt.run({$financialId: 4, $startDate: '1/1/2017', $endDate: '1/31/2017', $netReturn: 1.8647, $grossReturn: 1.9028, $startMarketValue: 512896217.00, $endMarketValue: 522655447.48});
+      stmt.run({$financialId: 4, $startDate: '2/1/2017', $endDate: '2/28/2017', $netReturn: 2.0268, $grossReturn: 2.0682, $startMarketValue: 522655447.48, $endMarketValue: 533464858.49});
+      stmt.run({$financialId: 4, $startDate: '3/1/2017', $endDate: '3/31/2017', $netReturn: 1.9600, $grossReturn: 2.0000, $startMarketValue: 533464858.49, $endMarketValue: 544134202.71});
+      stmt.run({$financialId: 4, $startDate: '4/1/2017', $endDate: '4/30/2017', $netReturn: 2.0318, $grossReturn: 2.0733, $startMarketValue: 544134202.71, $endMarketValue: 555415572.88});
+      stmt.run({$financialId: 4, $startDate: '5/1/2017', $endDate: '5/31/2017', $netReturn: 1.8739, $grossReturn: 1.9122, $startMarketValue: 555415572.88, $endMarketValue: 566036068.10});
+      stmt.run({$financialId: 4, $startDate: '6/1/2017', $endDate: '6/30/2017', $netReturn: 2.0215, $grossReturn: 2.0628, $startMarketValue: 566036068.10, $endMarketValue: 577712165.69});
 
       stmt.finalize(() => { next(); });
     });
