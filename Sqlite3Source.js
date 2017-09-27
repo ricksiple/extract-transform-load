@@ -5,8 +5,8 @@ var Queue = require('./util/queue.js');
 
 class Sqlite3Source extends stream.Readable {
 
-  constructor(options, db, query) {
-    super(options);
+  constructor(db, query, streamOptions) {
+    super(streamOptions || { objectMode: true });
 
     this.queue = new Queue();
     this.isActive = false;

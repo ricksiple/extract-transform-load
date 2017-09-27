@@ -2,8 +2,8 @@ var stream = require('stream');
 
 class PipeSource extends stream.Readable {
 
-  constructor(options, verbose = false) {
-    super(options);
+  constructor(StreamOptions, verbose = false) {
+    super(StreamOptions || { objectMode: true });
     this.values = [];
     this.verbose = verbose;
   }

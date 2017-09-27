@@ -16,17 +16,17 @@ class ImportFinancialType {
       next('SOURCE: ' + error);
     });
 
-    var lr = new LineReader({objectMode: true});
+    var lr = new LineReader();
     lr.on('error', function(error) {
       next('LINEREADER: ' + error);
     });
 
-    var csv = new CsvParser({objectMode: true, useHeaders: true});
+    var csv = new CsvParser({useHeaders: true});
     csv.on('error', function(error) {
       next('CSVPARSER: ' + error);
     });
 
-    var s3target = new Sqlite3Target({objectMode: true},
+    var s3target = new Sqlite3Target(
       db, 'FinancialType',
       ['type_code', 'type_name'], ['code', 'name']
     );

@@ -17,18 +17,18 @@ class ImportRelationship {
       next('SOURCE: ' + error)
     });
 
-    var lr = new LineReader({objectMode: true});
+    var lr = new LineReader();
     lr.on('error', function(error) {
       next('LINEREADER: ' + error)
     });
 
-    var csv = new CsvParser({objectMode: true, useHeaders: true});
+    var csv = new CsvParser({useHeaders: true});
     csv.on('error', function(error) {
       next('CSVPARSER: ' + error)
     });
 
     // var ownerTable = new Sqlite3Table({objectMode: true, log: function(msg) { console.log(msg); }},
-    var ownerTable = new Sqlite3Table({objectMode: true},
+    var ownerTable = new Sqlite3Table(
       db, 'Financial',
       ['Owner'], ['code'],
       ['ownerId'], ['id']
@@ -37,7 +37,7 @@ class ImportRelationship {
       next('OWNERTABLE: ' + error)
     });
 
-    var ownedTable = new Sqlite3Table({objectMode: true},
+    var ownedTable = new Sqlite3Table(
       db, 'Financial',
       ['Owned'], ['code'],
       ['ownedId'], ['id']
@@ -46,7 +46,7 @@ class ImportRelationship {
       next('OWNEDTABLE: ' + error)
     });
 
-    var s3Target = new Sqlite3Target({objectMode: true, log: (message) => { console.log("s3Target: " + message); }},
+    var s3Target = new Sqlite3Target(
       db, 'Relationship',
       ['ownerId', 'ownedId', 'StartDate', 'EndDate'],
       ['ownerId', 'ownedId', 'startDate', 'endDate']

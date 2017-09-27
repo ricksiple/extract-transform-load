@@ -5,13 +5,13 @@ var noFormat = { format: function(s) { return s; } };
 
 class CsvTarget extends stream.Transform {
 
-  constructor(options, fields, formats, headers) {
-    super(options);
+  constructor(fields, formats, headers, csvOptions, streamOptions) {
+    super(streamOptions || { objectMode: true });
 
     this.fields = fields;
     this.headers = headers || this.fields;
     this.formats = formats;
-    this.EOL = options.EOL || '\r\n'
+    this.EOL = (csvOptions || {}).EOL || '\r\n'
     if (!this.formats) {
       this.formats = [];
       for (var n = 0; n < this.fields.length; n++) {

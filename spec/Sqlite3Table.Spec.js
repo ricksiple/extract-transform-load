@@ -44,13 +44,13 @@ describe('Sqlite3Table', function() {
 
     it('should store a single key field and a single lookup field.', function(done) {
 
-      var source = new PipeSource({objectMode: true});
+      var source = new PipeSource();
       source.arrange({name: 'Adam', role: 'MGR'});
       source.arrange({name: 'Bob', role: 'DEV'});
       source.arrange({name: 'Carl', role: 'TST'});
       source.on('error', function(error) { fail('SOURCE: ' + error); done(); });
 
-      var target = new PipeTarget({objectMode: true},
+      var target = new PipeTarget(
         function(actual, expected) {
           expect(actual).toEqual(expected);
           return true;
@@ -65,7 +65,7 @@ describe('Sqlite3Table', function() {
         done();
       });
 
-      var s3t = new Sqlite3Table({objectMode: true},
+      var s3t = new Sqlite3Table(
         db, 'RoleType',
         ['role'], ['code'],
         ['roleId'], ['id']
@@ -77,13 +77,13 @@ describe('Sqlite3Table', function() {
 
     it('should throw an error if the rowMatch/tableMatch lengths are different.', function(done) {
 
-      var source = new PipeSource({objectMode: true});
+      var source = new PipeSource();
       source.arrange({name: 'Adam', role: 'MGR'});
       source.arrange({name: 'Bob', role: 'DEV'});
       source.arrange({name: 'Carl', role: 'TST'});
       source.on('error', function(error) { fail('SOURCE: ' + error); done(); });
 
-      var target = new PipeTarget({objectMode: true},
+      var target = new PipeTarget(
         function(actual, expected) {
           expect(actual).toEqual(expected);
           return true;
@@ -98,7 +98,7 @@ describe('Sqlite3Table', function() {
         done();
       });
 
-      var s3t = new Sqlite3Table({objectMode: true},
+      var s3t = new Sqlite3Table(
         db, 'RoleType',
         ['role', 'oops'], ['code'],
         ['roleId'], ['id']
@@ -115,13 +115,13 @@ describe('Sqlite3Table', function() {
 
   it('should throw an error if the rowLookup/tableLookup lengths are different.', function(done) {
 
-    var source = new PipeSource({objectMode: true});
+    var source = new PipeSource();
     source.arrange({name: 'Adam', role: 'MGR'});
     source.arrange({name: 'Bob', role: 'DEV'});
     source.arrange({name: 'Carl', role: 'TST'});
     source.on('error', function(error) { fail('SOURCE: ' + error); done(); });
 
-    var target = new PipeTarget({objectMode: true},
+    var target = new PipeTarget(
       function(actual, expected) {
         expect(actual).toEqual(expected);
         return true;
@@ -136,7 +136,7 @@ describe('Sqlite3Table', function() {
       done();
     });
 
-    var s3t = new Sqlite3Table({objectMode: true},
+    var s3t = new Sqlite3Table(
       db, 'RoleType',
       ['role'], ['code'],
       ['roleId', 'oops'], ['id']
@@ -198,14 +198,14 @@ describe('Sqlite3Table', function() {
 
     it('should store a mulitple key field and a mulitple lookup field.', function(done) {
 
-      var source = new PipeSource({objectMode: true});
+      var source = new PipeSource();
       source.arrange({name: 'Adam', roleType: 'IT', role: 'MGR'});
       source.arrange({name: 'Bob', roleType: 'IT', role: 'DEV'});
       source.arrange({name: 'Jane', roleType: 'ADM', role: 'MGR'});
       source.arrange({name: 'Carl', roleType: 'IT', role: 'TST'});
       source.on('error', function(error) { fail('SOURCE: ' + error); done(); });
 
-      var target = new PipeTarget({objectMode: true},
+      var target = new PipeTarget(
         function(actual, expected) {
           expect(actual).toEqual(expected);
           return true;
@@ -221,7 +221,7 @@ describe('Sqlite3Table', function() {
         done()
       });
 
-      var s3t = new Sqlite3Table({objectMode: true},
+      var s3t = new Sqlite3Table(
         db, 'RoleType',
         ['roleType', 'role'], ['typeCode', 'code'],
         ['roleId', 'roleName'], ['id', 'name']

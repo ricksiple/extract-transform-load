@@ -14,10 +14,10 @@ describe('CSV pipeline', function() {
     var reader = new LineReader({decodeStrings: false, encoding:'utf8'});
     reader.on('error', function(error) { console.log('LineReader: ' + error); });
 
-    var parser = new CsvParser({objectMode: true, useHeaders: true});
+    var parser = new CsvParser({useHeaders: true});
     parser.on('error', function(error) { console.log('CsvParser: ' + error); });
 
-    var target = new PipeTarget({objectMode: true}, function(chunk, value) {
+    var target = new PipeTarget(function(chunk, value) {
       return chunk.id === value.id && chunk.name === value.name && chunk.handle === value.handle;
     });
     target.on('error', function(error) { console.log('PipeTarget: ' + error); });

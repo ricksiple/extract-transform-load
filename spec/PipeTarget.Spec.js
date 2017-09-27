@@ -8,7 +8,7 @@ describe('PipeTarget', function() {
 
   beforeEach(function() {
     source = new PipeSource({encoding: 'utf8', decodeStrings: false});
-    target = new PipeTarget({encoding: 'utf8', decodeStrings: false});
+    target = new PipeTarget(null, {encoding: 'utf8', decodeStrings: false});
   });
 
   it('should detect only a single line of input.', function(done) {

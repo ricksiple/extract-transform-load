@@ -10,14 +10,14 @@ describe('Sort', function() {
 
   beforeEach(function() {
 
-    source = new PipeSource({objectMode: true});
+    source = new PipeSource();
     source.arrange({id:3, name:'Adam'});
     source.arrange({id:1, name:'Bob'});
     source.arrange({id:4, name:'Charles'});
     source.arrange({id:2, name:'David'});
     source.on('error', function(error) { console.log('SOURCE: ' + error); } );
 
-    target = new PipeTarget({objectMode: true},
+    target = new PipeTarget(
       function(actual, expected) {
         return true;
       });
@@ -38,7 +38,7 @@ describe('Sort', function() {
       done();
     });
 
-    var sort = new Sort({objectMode: true}, ['id'], ['asc']);
+    var sort = new Sort(['id'], ['asc']);
     sort.on('error', function(error) { console.log('SORT: ' + error); });
 
     source.pipe(sort).pipe(target);
@@ -56,7 +56,7 @@ describe('Sort', function() {
       done();
     });
 
-    var sort = new Sort({objectMode: true}, ['id'], ['desc']);
+    var sort = new Sort(['id'], ['desc']);
     sort.on('error', function(error) { console.log('SORT: ' + error); });
 
     source.pipe(sort).pipe(target);
@@ -74,7 +74,7 @@ describe('Sort', function() {
       done();
     });
 
-    var sort = new Sort({objectMode: true}, ['name'], ['asc']);
+    var sort = new Sort(['name'], ['asc']);
     sort.on('error', function(error) { console.log('SORT: ' + error); });
 
     source.pipe(sort).pipe(target);
@@ -92,7 +92,7 @@ describe('Sort', function() {
       done();
     });
 
-    var sort = new Sort({objectMode: true}, ['name'], ['desc']);
+    var sort = new Sort(['name'], ['desc']);
     sort.on('error', function(error) { console.log('SORT: ' + error); });
 
     source.pipe(sort).pipe(target);
@@ -101,7 +101,7 @@ describe('Sort', function() {
 
   it('should sort on a two fields ascending.', function(done) {
 
-    source = new PipeSource({objectMode: true});
+    source = new PipeSource();
     source.arrange({id:2, name:'Adam'});
     source.arrange({id:1, name:'Bob'});
     source.arrange({id:1, name:'Charles'});
@@ -117,7 +117,7 @@ describe('Sort', function() {
       done();
     });
 
-    var sort = new Sort({objectMode: true}, ['id', 'name'], ['asc', 'asc']);
+    var sort = new Sort(['id', 'name'], ['asc', 'asc']);
     sort.on('error', function(error) { console.log('SORT: ' + error); });
 
     source.pipe(sort).pipe(target);
@@ -126,7 +126,7 @@ describe('Sort', function() {
 
   it('should sort on a two fields oppositely.', function(done) {
 
-    source = new PipeSource({objectMode: true});
+    source = new PipeSource();
     source.arrange({id:2, name:'Adam'});
     source.arrange({id:1, name:'Bob'});
     source.arrange({id:1, name:'Charles'});
@@ -142,7 +142,7 @@ describe('Sort', function() {
       done();
     });
 
-    var sort = new Sort({objectMode: true}, ['id', 'name'], ['desc', 'asc']);
+    var sort = new Sort(['id', 'name'], ['desc', 'asc']);
     sort.on('error', function(error) { console.log('SORT: ' + error); });
 
     source.pipe(sort).pipe(target);

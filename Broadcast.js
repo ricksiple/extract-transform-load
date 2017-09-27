@@ -2,8 +2,8 @@ var stream = require('stream');
 
 class Broadcast extends stream.Transform {
 
-  constructor(options, duplicator, targetStreams) {
-    super(options);
+  constructor(duplicator, targetStreams, streamOptions) {
+    super(streamOptions || { objectMode: true});
     this.duplicator = duplicator;
     this.targetStreams = targetStreams;
   }

@@ -30,8 +30,8 @@ function formatParameter(field_value, field_type) {
 
 class Sqlite3Target extends stream.Writable {
 
-  constructor(options, db, table_name, stream_fields, table_fields, table_types) {
-    super(options);
+  constructor(db, table_name, stream_fields, table_fields, table_types, streamOptions) {
+    super(streamOptions || { objectMode: true });
 
     this.db = db;
     this.stream_fields = stream_fields;

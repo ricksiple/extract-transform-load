@@ -10,7 +10,7 @@ describe('Sqlite3Source', () => {
 
   beforeEach((done) => {
 
-    target = new PipeTarget({objectMode: true} ,(actual, expected) => { return (actual.targetId === expected.targetId && actual.targetName === expected.targetName); });
+    target = new PipeTarget((actual, expected) => { return (actual.targetId === expected.targetId && actual.targetName === expected.targetName); });
 
     db = new Sqlite3.Database(':memory:');
     db.serialize(() => {
@@ -36,7 +36,7 @@ describe('Sqlite3Source', () => {
 
   it('should read a table.', (done) => {
 
-    source = new Sqlite3Source({objectMode: true}, db, 'SELECT targetId, targetName FROM target ORDER BY targetId DESC')
+    source = new Sqlite3Source(db, 'SELECT targetId, targetName FROM target ORDER BY targetId DESC')
     source.on('error', (err) => { fail('SOURCE: ' + err); done(); });
 
     target.arrange({targetId:3, targetName:'Jack'});

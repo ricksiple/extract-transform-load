@@ -2,8 +2,8 @@ var stream = require('stream');
 
 class LineReader extends stream.Transform {
 
-  constructor(options) {
-    super(options);
+  constructor(streamOptions) {
+    super(streamOptions || { encoding: 'utf8', decodeStrings: false });
     this.buffer = '';
   }
 

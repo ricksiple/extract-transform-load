@@ -3,9 +3,9 @@ var csv = require('comma-separated-values');
 
 class CsvParser extends stream.Transform {
 
-  constructor(options) {
-    super(options);
-    this.useHeaders = options.useHeaders || false;
+  constructor(csvOptions, streamOptions) {
+    super(streamOptions || { objectMode: true} );
+    this.useHeaders = (csvOptions || {}).useHeaders || false;
     if (this.useHeaders) {
       this._transform = this._transform_header;
     } else {

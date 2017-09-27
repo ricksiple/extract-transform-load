@@ -3,11 +3,10 @@ var orderBy = require('lodash.orderby');
 
 class Sort extends stream.Transform {
 
-  constructor(options, fields, order, verbose = false) {
-    super(options);
+  constructor(fields, order, streamOptions) {
+    super(streamOptions || { objectMode: true });
     this.fields = fields;
     this.order = order;
-    this.verbose = verbose;
     this.rows = [];
   }
 

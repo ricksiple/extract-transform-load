@@ -44,7 +44,7 @@ describe('Broadcast-CalcField', function() {
 
   it('should populate two target streams from a single source.', function(done) {
 
-    var source = new PipeSource({objectMode:true});
+    var source = new PipeSource();
     source.on('error', function(error) { fail('source: ' + error); });
     test_data.forEach(function(v,i) { source.arrange(v); });
 
@@ -52,7 +52,7 @@ describe('Broadcast-CalcField', function() {
       if (target1_complete && target2_complete) done();
     }
 
-    var calc1 = new CalcField({objectMode:true},
+    var calc1 = new CalcField(
       function(chunk) {
         chunk.id = -chunk.id;
         return chunk;
@@ -60,7 +60,7 @@ describe('Broadcast-CalcField', function() {
     calc1.on('error', function(error) { fail('calc1: ' + error); done(); });
 
     var target1_complete = false;
-    var target1 = new PipeTarget({objectMode:true}, test_compare);
+    var target1 = new PipeTarget(test_compare);
     target1.on('error', function(error) { fail('target1: ' + error); done(); });
     target1.on('finish', function() {
       target1.assert();
@@ -69,7 +69,7 @@ describe('Broadcast-CalcField', function() {
     });
     target1_data.forEach(function(v,i) { target1.arrange(v); });
 
-    var calc2 = new CalcField({objectMode:true},
+    var calc2 = new CalcField(
       function(chunk) {
         chunk.name = chunk.name + ' Simpson';
         return chunk;
@@ -77,7 +77,7 @@ describe('Broadcast-CalcField', function() {
     calc2.on('error', function(error) { fail('calc2: ' + error); done(); });
 
     var target2_complete = false;
-    var target2 = new PipeTarget({objectMode:true}, test_compare);
+    var target2 = new PipeTarget(test_compare);
     target2.on('error', function(error) { fail('target2: ' + error); done(); });
     target2.on('finish', function() {
       target2.assert();
@@ -86,7 +86,7 @@ describe('Broadcast-CalcField', function() {
     });
     target2_data.forEach(function(v,i) { target2.arrange(v); });
 
-    var broadcast = new Broadcast({objectMode:true}, broadcast_duplicate, [calc1, calc2]);
+    var broadcast = new Broadcast(broadcast_duplicate, [calc1, calc2]);
 
     calc1.pipe(target1);
     calc2.pipe(target2);

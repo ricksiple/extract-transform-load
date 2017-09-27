@@ -15,7 +15,7 @@ describe("LineReader", function() {
     src.arrange('00","USD",1\r\n"MXWO Inde');
     src.arrange('x","MSCI World","USD",2');
 
-    var tgt = new PipeTarget({ encoding: 'utf8', decodeStrings: false });
+    var tgt = new PipeTarget(null, { encoding: 'utf8', decodeStrings: false });
     tgt.arrange('"code","name","currencyId","id"');
     tgt.arrange('"NDX Index","NASDAQ 100","USD",3');
     tgt.arrange('"SPX Index","S&P 500","USD",1');
@@ -26,7 +26,7 @@ describe("LineReader", function() {
       done();
     });
 
-    var lineReader = new LineReader({ encoding: 'utf8', decodeStrings: false })
+    var lineReader = new LineReader()
       .on("error", function(err) { throw "toStringTransform: " + err; });
 
     src.pipe(lineReader).pipe(tgt);

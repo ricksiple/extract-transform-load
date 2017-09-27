@@ -15,7 +15,7 @@ describe('CsvParser', function() {
     source.arrange('one,two,red,blue');
     source.arrange('three,four,"window,door"');
 
-    target = new PipeTarget({objectMode: true}, PipeTarget.compareArrays);
+    target = new PipeTarget(PipeTarget.compareArrays);
     target.arrange(['Column1', 'Column2', 'Column3']);
     target.arrange(['one','two','red','blue']);
     target.arrange(['three','four','window,door']);
@@ -24,7 +24,7 @@ describe('CsvParser', function() {
       done();
     });
 
-    parser = new CsvParser({objectMode: true});
+    parser = new CsvParser();
 
     source.pipe(parser).pipe(target);
 
@@ -37,7 +37,7 @@ describe('CsvParser', function() {
     source.arrange('1,"Homer Simpson","Springfield Nuclear Power","Springfield","ZZ"');
     source.arrange('4,"Bart Simpson","Kiwk-E-Mart","Summerfield","XX"');
 
-    target = new PipeTarget({objectMode: true}, function(chunk, value) {
+    target = new PipeTarget(function(chunk, value) {
       return chunk.id === value.id && chunk.name === value.name && chunk.company === value.company && chunk.city === value.city && chunk.state === value.state;
     });
     target.arrange({id:1,name:"Homer Simpson",company:"Springfield Nuclear Power",city:"Springfield",state:"ZZ"});
@@ -47,7 +47,7 @@ describe('CsvParser', function() {
       done();
     });
 
-    parser = new CsvParser({objectMode: true, useHeaders: true});
+    parser = new CsvParser({useHeaders: true});
 
     source.pipe(parser).pipe(target);
 

@@ -9,17 +9,17 @@ describe('UnionAll', function() {
 
     var spy;
 
-    var source1 = new PipeSource({objectMode:true});
+    var source1 = new PipeSource();
     source1.on('error', function(error) { fail('source1: ' + error); });
     source1.arrange({id:1,name:'Adam'});
     source1.arrange({id:4,name:'Bill'});
 
-    var source2 = new PipeSource({objectMode:true});
+    var source2 = new PipeSource();
     source2.on('error', function(error) { fail('source2: ' + error); });
     source2.arrange({id:3,name:'Sue'});
     source2.arrange({id:2,name:'Mary'})
 
-    var target = new PipeTarget({objectMode:true},
+    var target = new PipeTarget(
       function(actual, expected) {
         return true;
       }
@@ -35,7 +35,7 @@ describe('UnionAll', function() {
       done();
     });
 
-    var union = new UnionAll({objectMode:true}, [source1, source2]);
+    var union = new UnionAll([source1, source2]);
     union.on('error', function(error) { fail('union: ' + error); });
 
     spy = spyOn(target, '_spy');

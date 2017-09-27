@@ -10,13 +10,13 @@ describe('Sqlite3Target', () => {
 
   beforeEach((done) => {
 
-    source = new PipeSource({objectMode: true});
+    source = new PipeSource();
     source.on('error', (error) => { console.log('SOURCE: ' + error); });
 
     db = new Sqlite3.Database(':memory:', () => {
       db.run('CREATE TABLE target (targetId INTEGER, targetName TEXT)',
         (error) => {
-          target = new Sqlite3Target({objectMode: true}, db, 'target', ["id", "name"], ["targetId", "targetName"]);
+          target = new Sqlite3Target(db, 'target', ["id", "name"], ["targetId", "targetName"]);
           target.on('error', (error) => { console.log('TARGET: ' + error); });
           done();
         });

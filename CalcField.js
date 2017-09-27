@@ -2,8 +2,8 @@ var stream = require('stream');
 
 class CalcField extends stream.Transform {
 
-  constructor(options, calculator) {
-    super(options);
+  constructor(calculator, streamOptions) {
+    super(streamOptions || { objectMode: true });
     this.calculator = calculator;
   }
 

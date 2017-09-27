@@ -10,12 +10,12 @@ describe('CsvTarget', () => {
 
   beforeEach(() => {
 
-    source = new PipeSource({objectMode: true});
+    source = new PipeSource();
     source.arrange({name: 'John', id: 2, title: 'Software Developer'});
     source.arrange({name: 'Betty', id:1, title: 'Software Tester'});
     source.arrange({name: 'Joan', id:3, title: 'Director'});
 
-    target = new PipeTarget({objectMode: true});
+    target = new PipeTarget();
 
   });
 
@@ -30,7 +30,7 @@ describe('CsvTarget', () => {
     target.on('error', (error) => { fail('TARGET: ' + error); done(); });
     target.on('finish', done);
 
-    var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title'], [Intl.NumberFormat(), CsvTarget.quoteString, CsvTarget.quoteString], ['Employee Id', 'Employee Name', 'Employee Title']);
+    var csv = new CsvTarget(['id', 'name', 'title'], [Intl.NumberFormat(), CsvTarget.quoteString, CsvTarget.quoteString], ['Employee Id', 'Employee Name', 'Employee Title']);
     csv.on('error', (error) => { fail('CsvTarget: ' + error); done(); });
 
     source.pipe(csv).pipe(target);
@@ -48,7 +48,7 @@ describe('CsvTarget', () => {
     target.on('error', (error) => { fail('TARGET: ' + error); done(); });
     target.on('finish', done);
 
-    var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title'], [Intl.NumberFormat(), CsvTarget.quoteString, CsvTarget.quoteString]);
+    var csv = new CsvTarget(['id', 'name', 'title'], [Intl.NumberFormat(), CsvTarget.quoteString, CsvTarget.quoteString]);
     csv.on('error', (error) => { fail('CsvTarget: ' + error); done(); });
 
     source.pipe(csv).pipe(target);
@@ -58,7 +58,7 @@ describe('CsvTarget', () => {
   it('should throw an error if the header count does not match the field count.', () => {
 
     expect( () => {
-      var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title'], [Intl.NumberFormat(), CsvTarget.quoteString, CsvTarget.quoteString], ['Employee_Id', 'Employee_Name']);
+      var csv = new CsvTarget(['id', 'name', 'title'], [Intl.NumberFormat(), CsvTarget.quoteString, CsvTarget.quoteString], ['Employee_Id', 'Employee_Name']);
     }).toThrowError();
 
   });
@@ -66,7 +66,7 @@ describe('CsvTarget', () => {
   it('should throw an error if the formatter count does not match the field count.', () => {
 
     expect( () => {
-      var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title'], [Intl.NumberFormat(), CsvTarget.quoteString], ['Employee_Id', 'Employee_Name', 'Employee_Title']);
+      var csv = new CsvTarget(['id', 'name', 'title'], [Intl.NumberFormat(), CsvTarget.quoteString], ['Employee_Id', 'Employee_Name', 'Employee_Title']);
     }).toThrowError();
 
   });
@@ -82,7 +82,7 @@ describe('CsvTarget', () => {
     target.on('error', (error) => { fail('TARGET: ' + error); done(); });
     target.on('finish', done);
 
-    var csv = new CsvTarget({objectMode: true}, ['id', 'name', 'title']);
+    var csv = new CsvTarget(['id', 'name', 'title']);
     csv.on('error', (error) => { fail('CsvTarget: ' + error); done(); });
 
     source.pipe(csv).pipe(target);

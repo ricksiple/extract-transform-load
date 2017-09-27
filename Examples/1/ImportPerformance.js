@@ -17,18 +17,18 @@ class ImportPerformance {
       next('SOURCE: ' + error)
     });
 
-    var lr = new LineReader({objectMode: true});
+    var lr = new LineReader();
     lr.on('error', function(error) {
       next('LINEREADER: ' + error)
     });
 
-    var csv = new CsvParser({objectMode: true, useHeaders: true});
+    var csv = new CsvParser({useHeaders: true});
     csv.on('error', function(error) {
       next('CSVPARSER: ' + error)
     });
 
     // var ownerTable = new Sqlite3Table({objectMode: true, log: function(msg) { console.log(msg); }},
-    var s3Table = new Sqlite3Table({objectMode: true},
+    var s3Table = new Sqlite3Table(
       db, 'Financial',
       ['Code'], ['code'],
       ['financialId'], ['id']
@@ -37,7 +37,7 @@ class ImportPerformance {
       next('S3TABLE: ' + error)
     });
 
-    var s3Target = new Sqlite3Target({objectMode: true, log: (message) => { console.log("s3Target: " + message); }},
+    var s3Target = new Sqlite3Target(
       db, 'Performance',
       ['financialId', 'StartDate', 'EndDate', 'NetReturn', 'GrossReturn', 'StartMarketValue', 'EndMarketValue'],
       ['financialId', 'startDate', 'endDate',  'netReturn', 'grossReturn', 'startMarketValue', 'endMarketValue'],

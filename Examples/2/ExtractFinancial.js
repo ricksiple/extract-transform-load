@@ -12,13 +12,13 @@ class ExtractFinancial {
 
     var stringDateFormat = {format: function(dateString) { return (dateString.length) ? Intl.DateTimeFormat().format(new Date(dateString)) : dateString; }};
 
-    var source = new Sqlite3Source({objectMode: true}, db,
+    var source = new Sqlite3Source(db,
       'SELECT f.code AS code, f.name as name, ft.name AS type, f.startdate AS startdate, f.enddate AS enddate '
       + 'FROM Financial AS f INNER JOIN FinancialType AS ft ON f.financialTypeId = ft.id '
       + 'ORDER BY f.name ASC');
     source.on('error', (err) => { next('SOURCE: ' + err); });
 
-    var csv  = new CsvTarget({objectMode: true}, ['code', 'name', 'type', 'startdate', 'enddate'], [CsvTarget.quoteString, CsvTarget.quoteString, CsvTarget.quoteString, stringDateFormat, stringDateFormat]);
+    var csv  = new CsvTarget(['code', 'name', 'type', 'startdate', 'enddate'], [CsvTarget.quoteString, CsvTarget.quoteString, CsvTarget.quoteString, stringDateFormat, stringDateFormat]);
     csv.on('error', (err) => { next('CSV: ' + err); });
 
     var target = fs.createWriteStream('./Financial.csv');
