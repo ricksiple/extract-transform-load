@@ -1,17 +1,25 @@
 {
   "name": "extract-transform-load",
-  "version": "1.0.0",
-  "description": "Extract, Transform and Load pipeline for Node",
-  "main": "main.js",
+  "version": "0.0.0",
+  "description": "parent module for etl modules",
+  "main": "index.js",
   "scripts": {
     "test": "jasmine"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ricksiple/extract-transform-load.git"
+  },
+  "keywords": [
+    "etl"
+  ],
   "author": "Rick Siple",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ricksiple/extract-transform-load/issues"
+  },
+  "homepage": "https://github.com/ricksiple/extract-transform-load#readme",
   "dependencies": {
-    "comma-separated-values": "^3.6.4",
-    "csv-streamify": "^3.0.4",
-    "lodash.orderby": "^4.6.0",
-    "sqlite3": "^3.1.9"
+    "sqlite3": "^3.1.13"
   }
 }

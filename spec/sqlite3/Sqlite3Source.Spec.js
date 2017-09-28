@@ -1,6 +1,8 @@
 var Sqlite3 = require('sqlite3').verbose();
-var PipeTarget = require('../util/PipeTarget');
-var Sqlite3Source = require('../Sqlite3Source');
+
+var Sqlite3Source = require('../../sqlite3/Sqlite3Source');
+
+var PipeTarget = require('../../util/PipeTarget');
 
 describe('Sqlite3Source', () => {
 

@@ -1,0 +1,21 @@
+{
+  "name": "aardvark-etl-sqlite3",
+  "version": "0.5.0",
+  "description": "Sqlite3 components for aardvark-etl-core extract, transform and load framework.",
+  "main": "app.js",
+  "directories": {
+    "example": "example"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "jasmine"
+  },
+  "keywords": [
+    "sqlite3",
+    "etl",
+    "pipes"
+  ],
+  "author": "Rick Siple",
+  "license": "ISC"
+}

@@ -1,7 +1,7 @@
-var UnionAll = require('../UnionAll');
+var UnionAll = require('../../core/UnionAll');
 
-var PipeSource = require('../Util/PipeSource');
-var PipeTarget = require('../Util/PipeTarget');
+var PipeSource = require('../../util/PipeSource');
+var PipeTarget = require('../../util/PipeTarget');
 
 describe('UnionAll', function() {
 

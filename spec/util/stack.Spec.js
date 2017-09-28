@@ -1,4 +1,4 @@
-var Stack = require('../util/stack');
+var Stack = require('../../util/stack');
 
 describe('Stack', function() {
 

@@ -1,7 +1,9 @@
-var Sqlite3Table = require('../Sqlite3Table');
 var Sqlite3 = require('sqlite3').verbose();
-var PipeSource = require('../util/PipeSource');
-var PipeTarget = require('../util/PipeTarget');
+
+var Sqlite3Table = require('../../sqlite3/Sqlite3Table');
+
+var PipeSource = require('../../util/PipeSource');
+var PipeTarget = require('../../util/PipeTarget');
 
 describe('Sqlite3Table', function() {
 

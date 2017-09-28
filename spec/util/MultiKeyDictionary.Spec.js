@@ -1,4 +1,4 @@
-var Mkd = require('../util/MultiKeyDictionary');
+var Mkd = require('../../util/MultiKeyDictionary');
 
 describe('MultiKeyDictionary', function() {
 

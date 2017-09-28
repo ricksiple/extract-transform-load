@@ -1,0 +1,19 @@
+{
+  "name": "aardvark-etl-core",
+  "version": "0.1.0",
+  "description": "Basic extract, transform and load framework using Node pipes.",
+  "main": "app.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "keywords": [
+    "etl",
+    "pipe"
+  ],
+  "author": "Rick Siple",
+  "license": "ISC",
+  "dependencies": {
+    "comma-separated-values": "^3.6.4",
+    "lodash.orderby": "^4.6.0"
+  }
+}

@@ -1,7 +1,9 @@
 var stream = require('stream');
-var PipeSource = require('../util/PipeSource');
-var PipeTarget = require('../util/PipeTarget');
-var LineReader = require('../LineReader');
+
+var LineReader = require('../../core/LineReader');
+
+var PipeSource = require('../../util/PipeSource');
+var PipeTarget = require('../../util/PipeTarget');
 
 describe("LineReader", function() {
 

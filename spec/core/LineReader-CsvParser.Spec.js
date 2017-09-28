@@ -1,7 +1,8 @@
-var PipeSource = require('../util/PipeSource');
-var LineReader = require('../LineReader');
-var CsvParser = require('../CsvParser');
-var PipeTarget = require('../util/PipeTarget');
+var LineReader = require('../../core/LineReader');
+var CsvParser = require('../../core/CsvParser');
+
+var PipeSource = require('../../util/PipeSource');
+var PipeTarget = require('../../util/PipeTarget');
 
 describe('CSV pipeline', function() {
 

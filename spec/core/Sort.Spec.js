@@ -1,6 +1,7 @@
-var PipeSource = require('../util/PipeSource');
-var PipeTarget = require('../util/PipeTarget');
-var Sort = require('../Sort');
+var Sort = require('../../core/Sort');
+
+var PipeSource = require('../../util/PipeSource');
+var PipeTarget = require('../../util/PipeTarget');
 
 describe('Sort', function() {
 

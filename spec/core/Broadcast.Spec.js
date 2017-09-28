@@ -1,7 +1,7 @@
-var Broadcast = require('../Broadcast');
+var Broadcast = require('../../core/Broadcast');
 
-var PipeSource = require('../util/PipeSource');
-var PipeTarget = require('../util/PipeTarget');
+var PipeSource = require('../../util/PipeSource');
+var PipeTarget = require('../../util/PipeTarget');
 
 function test_compare(expected, actual) {
   return expected.id === actual.id && expected.name === actual.name && expected.role === actual.role;

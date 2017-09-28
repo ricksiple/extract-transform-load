@@ -1,5 +1,5 @@
-var PipeTarget = require('../util/PipeTarget');
-var PipeSource = require('../util/PipeSource');
+var PipeTarget = require('../../util/PipeTarget');
+var PipeSource = require('../../util/PipeSource');
 
 describe('PipeTarget', function() {
 

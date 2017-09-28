@@ -1,4 +1,4 @@
-var PipeSource = require('../util/PipeSource');
+var PipeSource = require('../../util/PipeSource');
 
 describe('PipeSource', function() {
 

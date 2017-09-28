@@ -1,6 +1,6 @@
-var PipeSource = require('../util/PipeSource');
-var PipeTarget = require('../util/PipeTarget');
-var CsvParser = require('../CsvParser');
+var PipeSource = require('../../util/PipeSource');
+var PipeTarget = require('../../util/PipeTarget');
+var CsvParser = require('../../core/CsvParser');
 
 describe('CsvParser', function() {
 

@@ -1,7 +1,7 @@
-var CalcField = require('../CalcField');
+var CalcField = require('../../core/CalcField');
 
-var PipeSource = require('../util/PipeSource');
-var PipeTarget = require('../util/PipeTarget');
+var PipeSource = require('../../util/PipeSource');
+var PipeTarget = require('../../util/PipeTarget');
 
 describe('CalcField', function() {
 

@@ -1,5 +1,6 @@
 var stream = require('stream');
-var Mkd = require('./util/MultiKeyDictionary');
+
+var Mkd = require('../util/MultiKeyDictionary');
 
 class Sqlite3Table extends stream.Transform {
 

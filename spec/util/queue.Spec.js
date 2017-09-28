@@ -1,4 +1,4 @@
-var Queue = require('../util/queue');
+var Queue = require('../../util/queue');
 
 describe('Queue', function() {
 
