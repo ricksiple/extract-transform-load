@@ -5,19 +5,18 @@ var app = express();
 
 // setup upload path
 var upload = multer({dest: 'uploads'});
-var router = express.Router();
-router.route('/upload')
-  .post(upload.single('perf_file'),
+app.post('/upload', upload.single('data'),
     function(req, res, next)
     {
+      // console.log(req);
       console.log(req.file);
+      res.status(200).send("OK");
       next();
     }
   );
-app.use('/upload', router);
 
 // setup static file path
-app.use(express.static('public'));
+app.use('/', express.static('public'));
 
 // start listening
 app.listen(3000, function() { console.log('listening on port 3000...'); });
